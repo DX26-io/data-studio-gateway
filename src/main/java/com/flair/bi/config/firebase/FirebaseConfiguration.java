@@ -45,8 +45,8 @@ public class FirebaseConfiguration {
 
     @ConditionalOnProperty(value = "app.firebase.enabled", havingValue = "true")
     @Bean
-    public IViewStateRepository viewStateRepository(OAuth2Credentials googleCredentials) {
-        return new ViewStateFirestoreRepository();
+    public IViewStateRepository viewStateRepository(OAuth2Credentials googleCredentials, IFirebaseProvider firebaseProvider) {
+        return new ViewStateFirestoreRepository(firebaseProvider, ViewStateFirestoreRepository.CHUNK_SIZE);
     }
 
 }

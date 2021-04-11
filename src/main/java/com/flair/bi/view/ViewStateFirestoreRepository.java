@@ -1,15 +1,16 @@
 package com.flair.bi.view;
 
+import com.flair.bi.config.firebase.IFirebaseProvider;
 import com.flair.bi.config.jackson.JacksonUtil;
 import com.flair.bi.domain.ViewState;
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import com.google.firebase.cloud.FirestoreClient;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
@@ -31,18 +32,19 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ViewStateFirestoreRepository implements IViewStateRepository {
 
-    private static final String COLLECTION = "view-state";
-    private static final int CHUNK_SIZE = 100_000;
+    public static final int CHUNK_SIZE = 100_000;
+    public static final String COLLECTION = "view-state";
 
+    private final int chunkSize;
     private final Firestore db;
     private final ExecutorService executorService = Executors.newWorkStealingPool();
     private final ConcurrentHashMap<String, ReentrantLock> locks = new ConcurrentHashMap<>();
 
-    public ViewStateFirestoreRepository() {
-        db = FirestoreClient.getFirestore();
+    public ViewStateFirestoreRepository(IFirebaseProvider firebaseProvider, int chunkSize) {
+        this.db = firebaseProvider.getFirestore();
+        this.chunkSize = chunkSize;
     }
 
-    @SneakyThrows
     @Override
     public void add(ViewState viewState) {
         log.info("Create view state {}", viewState.getId());
@@ -54,7 +56,7 @@ public class ViewStateFirestoreRepository implements IViewStateRepository {
             remove(viewState);
 
             String strData = JacksonUtil.toString(viewState);
-            List<String> tokens = Lists.newArrayList(Splitter.fixedLength(CHUNK_SIZE).split(strData));
+            List<String> tokens = Lists.newArrayList(Splitter.fixedLength(chunkSize).split(strData));
 
             List<Future<?>> futures = new ArrayList<>();
 
@@ -69,13 +71,6 @@ public class ViewStateFirestoreRepository implements IViewStateRepository {
         });
     }
 
-//    @SneakyThrows
-//    private void saveDocumentMap(ViewState viewState, String subkey, Map<String, ?> map) throws RuntimeException {
-//        DocumentReference docRef = db.collection(COLLECTION).document(viewState.getId() + "." + subkey);
-//        docRef.set(map).get();
-//    }
-
-    @SneakyThrows
     private ApiFuture<WriteResult> saveDocumentList(ViewState viewState, String subkey, List<?> list) throws RuntimeException {
         log.debug("saving document {} key {}", viewState.getId(), subkey);
         DocumentReference docRef = db.collection(COLLECTION).document(viewState.getId() + "." + subkey);
@@ -84,15 +79,16 @@ public class ViewStateFirestoreRepository implements IViewStateRepository {
         return docRef.set(map);
     }
 
-    @SneakyThrows
     private ApiFuture<WriteResult> saveDocumentValue(ViewState viewState, String subkey, Object value) throws RuntimeException {
         return saveDocumentList(viewState, subkey, Arrays.asList(value));
     }
 
     @SneakyThrows
     private List<?> getDocumentList(String documentId, String subkey) throws RuntimeException {
-        DocumentReference docRef = db.collection(COLLECTION).document(documentId + "." + subkey);
-        DocumentSnapshot snapshot = docRef.get().get();
+        CollectionReference collection = db.collection(COLLECTION);
+        DocumentReference docRef = collection.document(documentId + "." + subkey);
+        ApiFuture<DocumentSnapshot> future = docRef.get();
+        DocumentSnapshot snapshot = future.get();
         Map<String, Object> map = snapshot.getData();
         if (map == null || map.isEmpty()) {
             return null;
@@ -101,7 +97,6 @@ public class ViewStateFirestoreRepository implements IViewStateRepository {
         return JacksonUtil.fromString(str, List.class);
     }
 
-    @SneakyThrows
     private <T> T getDocumentValue(String documentId, String subkey) throws RuntimeException {
         List<?> list = getDocumentList(documentId, subkey);
         if (list == null || list.isEmpty()) {
@@ -117,21 +112,11 @@ public class ViewStateFirestoreRepository implements IViewStateRepository {
         return str.substring(0, Math.min(printSize, str.length())) + "...[" + str.length() + "]..." + str.substring(Math.max(0, str.length() - printSize));
     }
 
-//    @SneakyThrows
-//    private Map<String, ?> getDocumentMap(String documentId, String subkey) throws RuntimeException {
-//        DocumentReference docRef = db.collection(COLLECTION).document(documentId + "." + subkey);
-//        DocumentSnapshot snapshot = docRef.get().get();
-//        Map<String, Object> viewStateTypeIndicator = snapshot.getData();
-//        String str = JacksonUtil.toString(viewStateTypeIndicator);
-//        return JacksonUtil.fromString(str, Map.class);
-//    }
-
     @Override
     public void update(ViewState viewState) {
         add(viewState);
     }
 
-    @SneakyThrows
     @Override
     public void remove(ViewState viewState) {
         String vId = viewState.getId();
@@ -155,14 +140,12 @@ public class ViewStateFirestoreRepository implements IViewStateRepository {
         });
     }
 
-    @SneakyThrows
     private ApiFuture<WriteResult> deleteDocument(String documentName) {
         log.debug("Deleting document {}", documentName);
         DocumentReference docRef = db.collection(COLLECTION).document(documentName);
         return docRef.delete();
     }
 
-    @SneakyThrows
     @Override
     public ViewState get(String s) {
         log.info("Get view state {}", s);
