@@ -226,7 +226,7 @@ public class View extends AbstractAuditingEntity implements Serializable, Secure
         granteePermissionReport.getInfo().put("id", this.id);
         granteePermissionReport.getInfo().put("permissionMetadata", permissions
             .stream()
-            .map(y -> new PermissionReport(y, availablePermissions.contains(y)))
+            .map(y -> new PermissionReport(y, availablePermissions.contains(y), null))
             .collect(Collectors.toCollection(LinkedHashSet::new)));
 
         return granteePermissionReport;
