@@ -6,8 +6,10 @@ import com.flair.bi.authorization.DashboardGranteePermissionReport;
 import com.flair.bi.authorization.GranteePermissionReport;
 import com.flair.bi.authorization.PermissionGrantee;
 import com.flair.bi.authorization.PermissionReport;
+import com.flair.bi.authorization.PermissionStatus;
 import com.flair.bi.authorization.SecuredEntity;
 import com.flair.bi.domain.enumeration.Action;
+import com.flair.bi.domain.security.Permission;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,9 +31,11 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -72,7 +76,7 @@ public class Dashboard extends AbstractAuditingEntity implements Serializable, S
     @Transient
     @JsonProperty
     private byte[] image;
-    
+
     @Transient
 	public byte[] getImage() {
 		return image;
@@ -216,15 +220,10 @@ public class Dashboard extends AbstractAuditingEntity implements Serializable, S
     public <T extends PermissionGrantee> GranteePermissionReport<T> getGranteePermissionReport(T grantee) {
         GranteePermissionReport<T> granteePermissionReport = new GranteePermissionReport<>();
 
-        Set<PermissionReport> reports = this.getPermissions()
-            .stream()
-            .map(y -> new PermissionReport(y, grantee.getAvailablePermissions().contains(y)))
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+        Map<String, Object> map = createPermissionsMap(grantee);
 
         granteePermissionReport.setGrantee(grantee);
-        granteePermissionReport.getInfo().put("id", this.id);
-        granteePermissionReport.getInfo().put("dashboardName", this.dashboardName);
-        granteePermissionReport.getInfo().put("permissionMetadata", reports);
+        granteePermissionReport.setInfo(map);
 
         return granteePermissionReport;
     }
@@ -233,18 +232,53 @@ public class Dashboard extends AbstractAuditingEntity implements Serializable, S
     public <T extends PermissionGrantee> DashboardGranteePermissionReport<T> getDashboardGranteePermissionReport(T grantee,List<GranteePermissionReport<T>> viewPermissions) {
         DashboardGranteePermissionReport<T> granteePermissionReport = new DashboardGranteePermissionReport<>();
 
-        Set<PermissionReport> reports = this.getPermissions()
-                .stream()
-                .map(y -> new PermissionReport(y, grantee.getAvailablePermissions().contains(y)))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        Map<String, Object> map = createPermissionsMap(grantee);
 
         granteePermissionReport.setGrantee(grantee);
         granteePermissionReport.setViews(viewPermissions);
-        granteePermissionReport.getInfo().put("id", this.id);
-        granteePermissionReport.getInfo().put("dashboardName", this.dashboardName);
-        granteePermissionReport.getInfo().put("permissionMetadata", reports);
+        granteePermissionReport.setInfo(map);
+
         return granteePermissionReport;
     }
 
+    private <T extends PermissionGrantee> Map<String, Object> createPermissionsMap(T grantee) {
+        Set<Permission> availablePermissions = grantee.getAvailablePermissions();
+        Set<Permission> permissions = this.getPermissions();
+
+        Set<PermissionReport> reports = permissions
+                .stream()
+                .map(permission -> new PermissionReport(permission, availablePermissions.contains(permission), getDashboardStatus(availablePermissions, permission)))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("id", this.id);
+        map.put("dashboardName", this.dashboardName);
+        map.put("permissionMetadata", reports);
+        return map;
+    }
+
+    private PermissionStatus getDashboardStatus(Set<Permission> availablePermissions, Permission permission) {
+        Action action = permission.getAction();
+
+        boolean allMatch = dashboardViews.stream()
+                .allMatch(view -> hasViewPermissionsAmongAvailable(availablePermissions, action, view));
+
+        boolean anyMatch = dashboardViews.stream()
+                .anyMatch(view -> hasViewPermissionsAmongAvailable(availablePermissions, action, view));
+
+        if (allMatch) {
+            return PermissionStatus.ALLOW;
+        } else if (anyMatch) {
+            return PermissionStatus.PARTIAL;
+        }
+        return PermissionStatus.DENY;
+    }
+
+    private boolean hasViewPermissionsAmongAvailable(Set<Permission> availablePermissions, Action action, View view) {
+        return view.getPermissions()
+                .stream()
+                .filter(vp -> vp.getAction() == action)
+                .allMatch(vp -> availablePermissions.contains(vp));
+    }
 
 }

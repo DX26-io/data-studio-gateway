@@ -1,7 +1,7 @@
 package com.flair.bi.authorization;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.flair.bi.domain.security.Permission;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,9 +16,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PermissionReport {
 
 	private Permission permission;
 
 	private boolean hasIt;
+
+	private PermissionStatus status;
+
 }
