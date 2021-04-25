@@ -169,7 +169,11 @@ public class AccountResource {
 	public ResponseEntity<UserDTO> getAccount() {
 		User userWithAuthorities = userService.getUserWithAuthorities();
 		return Optional.ofNullable(userWithAuthorities)
-				.map(user -> new ResponseEntity<>(new UserDTO(user), HttpStatus.OK))
+				.map(user -> {
+					UserDTO userDTO = new UserDTO(user);
+					userDTO.initCurrentRealm(SecurityUtils.getUserAuth().getRealmId());
+					return new ResponseEntity<>(userDTO, HttpStatus.OK);
+				})
 				.orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 	}
 
