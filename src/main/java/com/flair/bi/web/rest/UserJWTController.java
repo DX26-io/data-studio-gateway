@@ -6,7 +6,9 @@ import com.flair.bi.security.jwt.JWTConfigurer;
 import com.flair.bi.service.auth.AuthService;
 import com.flair.bi.service.impl.RealmService;
 import com.flair.bi.service.signup.ConfirmUserResult;
+import com.flair.bi.service.signup.SignupException;
 import com.flair.bi.service.signup.SignupService;
+import com.flair.bi.web.rest.util.HeaderUtil;
 import com.flair.bi.web.rest.vm.AuthorizeRequest;
 import com.flair.bi.web.rest.vm.RealmInfo;
 import io.micrometer.core.annotation.Timed;
@@ -17,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -139,5 +142,13 @@ public class UserJWTController {
 		@JsonProperty("id_token")
 		private final String idToken;
 		private final List<RealmInfo> realms;
+	}
+
+	@ExceptionHandler(SignupException.class)
+	public ResponseEntity<?> handleSignupException(SignupException e) {
+		log.error("Signup error handler {}", e.getMessage());
+		return ResponseEntity.badRequest()
+				.headers(HeaderUtil.createFailureAlert("user", "flairbiApp.signup." + e.getError().name().toLowerCase()))
+				.body(null);
 	}
 }
