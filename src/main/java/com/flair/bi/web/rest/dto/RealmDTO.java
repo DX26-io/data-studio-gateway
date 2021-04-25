@@ -1,9 +1,11 @@
 package com.flair.bi.web.rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

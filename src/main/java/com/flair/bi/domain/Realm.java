@@ -1,6 +1,7 @@
 package com.flair.bi.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Entity
 @Table(name = "realm")
 @Data
