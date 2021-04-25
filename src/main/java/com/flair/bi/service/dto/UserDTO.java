@@ -1,22 +1,26 @@
 package com.flair.bi.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.flair.bi.config.Constants;
 import com.flair.bi.domain.User;
 import com.flair.bi.domain.security.Permission;
 import com.flair.bi.domain.security.UserGroup;
 import com.flair.bi.web.rest.dto.RealmDTO;
+import lombok.Data;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * A DTO representing a user, with his authorities.
  */
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@Data
 public class UserDTO {
 
 	@Pattern(regexp = Constants.LOGIN_REGEX)
@@ -46,6 +50,8 @@ public class UserDTO {
 
     private Set<RealmDTO> realms = new HashSet<>();
 
+	private RealmDTO currentRealm;
+
     public UserDTO() {
     }
 
@@ -70,12 +76,6 @@ public class UserDTO {
 		this.permissions = permissions;
 		this.userGroups = userGroups;
 		this.realms = realms;
-	}
-
-	public UserDTO(String login, String firstName, String lastName, String email, boolean activated, String langKey,
-				   String userType, Set<String> permissions, Set<String> userGroups, RealmDTO realm) {
-		this(login, firstName, lastName, email, activated, langKey, userType, permissions, userGroups,
-				Stream.of(realm).collect(Collectors.toSet()));
 	}
 
 	public String getLogin() {
@@ -121,4 +121,11 @@ public class UserDTO {
     public void setRealms(Set<RealmDTO> realms) {
         this.realms = realms;
     }
+
+	public void initCurrentRealm(Long realmId) {
+		this.currentRealm = this.realms.stream()
+				.filter(r -> Objects.equals(r.getId(), realmId))
+				.findFirst()
+				.orElse(null);
+	}
 }
