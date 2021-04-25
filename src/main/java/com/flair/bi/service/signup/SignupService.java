@@ -2,8 +2,10 @@ package com.flair.bi.service.signup;
 
 import com.flair.bi.domain.DraftUser;
 import com.flair.bi.domain.EmailConfirmationToken;
+import com.flair.bi.domain.User;
 import com.flair.bi.service.DraftUserService;
 import com.flair.bi.service.EmailConfirmationTokenService;
+import com.flair.bi.service.UserService;
 import com.flair.bi.service.email.EmailVerificationService;
 import com.flair.bi.service.impl.RealmService;
 import com.flair.bi.service.impl.ReplicateRealmResult;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,12 +24,22 @@ import java.util.Objects;
 public class SignupService {
 
     private final DraftUserService draftUserService;
+    private final UserService userService;
     private final RealmService realmService;
     private final EmailVerificationService emailVerificationService;
     private final EmailConfirmationTokenService emailConfirmationTokenService;
 
     @Transactional
     public void signup(String username, String password, String firstname, String lastname, String email) {
+        Optional<User> existingUsername = userService.getUserByLoginNoRealmCheck(username);
+        if (existingUsername.isPresent()) {
+            throw new SignupException(SignupException.Type.USERNAME_EXISTS);
+        }
+        Optional<User> existingUserEmail = userService.getUserByEmailAnyRealm(email);
+        if (existingUserEmail.isPresent()) {
+            throw new SignupException(SignupException.Type.EMAIL_EXISTS);
+        }
+
         DraftUser user = draftUserService.createUser(username, password, firstname,
                 lastname, email);
         emailVerificationService.sendConfirmYourEmailEmail(user);
