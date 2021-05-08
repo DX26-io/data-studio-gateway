@@ -1,10 +1,10 @@
 package com.flair.bi.domain.value;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @Entity
 @DiscriminatorValue(value = "INTEGER")
@@ -18,7 +18,8 @@ public class IntegerValue extends Value {
 		this.setType("INTEGER");
 	}
 
-	public int getValue() {
+	@Override
+	public Integer getValue() {
 		return value;
 	}
 

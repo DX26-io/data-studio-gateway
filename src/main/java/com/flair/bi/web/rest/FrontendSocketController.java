@@ -1,5 +1,7 @@
 package com.flair.bi.web.rest;
 
+import com.flair.bi.service.search.SearchResult;
+import com.flair.bi.service.search.SearchService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +16,13 @@ import org.springframework.stereotype.Controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Controller
 @Slf4j
 public class FrontendSocketController {
+
+	private final SearchService searchService;
 
 	@PreAuthorize("@accessControlManager.hasAccess(#viewId, 'READ', 'VIEW')")
 	@MessageMapping("/view/{viewId}/search")
@@ -31,8 +34,12 @@ public class FrontendSocketController {
 	) throws InterruptedException {
 		log.info("Search API called for view {}", viewId);
 
-		List<SearchResponse.Item> items = Stream.of(request.getText(), "hello")
-				.map(item -> new SearchResponse.Item(item))
+		SearchResult results = searchService.search(viewId, request.getText());
+
+		List<SearchResponse.Item> items = results.getItems()
+				.stream()
+				.map(item -> new SearchResponse.Item(item.getText()))
+				.filter(item -> item.getText().toUpperCase().contains(request.getText().toUpperCase()))
 				.collect(Collectors.toList());
 
 		return new SearchResponse(items);
