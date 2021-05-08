@@ -1,11 +1,11 @@
 package com.flair.bi.domain.value;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.validation.constraints.Size;
-
-import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @Entity
 @DiscriminatorValue(value = "STRING")
@@ -20,6 +20,7 @@ public class StringValue extends Value {
 		this.setType("STRING");
 	}
 
+	@Override
 	public String getValue() {
 		return value;
 	}

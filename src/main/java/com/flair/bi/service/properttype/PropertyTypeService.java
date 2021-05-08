@@ -1,9 +1,10 @@
 package com.flair.bi.service.properttype;
 
+import com.flair.bi.domain.propertytype.PropertyType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.flair.bi.domain.propertytype.PropertyType;
+import java.util.Optional;
 
 public interface PropertyTypeService {
 
@@ -14,4 +15,6 @@ public interface PropertyTypeService {
 	PropertyType save(PropertyType type);
 
 	void delete(long id);
+
+	Optional<PropertyType> findByName(String name);
 }
