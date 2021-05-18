@@ -16,6 +16,7 @@ import javax.annotation.PreDestroy;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -140,7 +141,7 @@ public class User extends AbstractAuditingEntity implements Serializable, Permis
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<DatasourceConstraint> datasourceConstraints = new HashSet<>();
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "user_realm",
 			joinColumns = @JoinColumn(name = "jhi_user_id", referencedColumnName = "id"),
 			inverseJoinColumns = @JoinColumn(name = "realms_id", referencedColumnName = "id"))
