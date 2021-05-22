@@ -39,7 +39,6 @@ public class FrontendSocketController {
 		List<SearchResponse.Item> items = results.getItems()
 				.stream()
 				.map(item -> new SearchResponse.Item(item.getText()))
-				.filter(item -> item.getText().toUpperCase().contains(request.getText().toUpperCase()))
 				.collect(Collectors.toList());
 
 		return new SearchResponse(items);
