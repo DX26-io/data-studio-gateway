@@ -23,13 +23,6 @@ public class SearchQLManager {
                 .findFirst()
                 .map(p -> p.getSearchResult())
                 .orElseGet(() -> new SearchResult(Collections.emptyList()));
-//        for (ISearchQLManagerProcessor processor : processors) {
-//            SearchQLManagerProcessorResult processorResult = processor.process(input);
-//            if (processorResult.stopProcessing()) {
-//                return processorResult.getSearchResult();
-//            }
-//        }
-//        return new SearchResult(Collections.emptyList());
     }
 
 }
