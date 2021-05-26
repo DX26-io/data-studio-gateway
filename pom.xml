@@ -15,18 +15,22 @@
         <url>${project.scm.url}</url>
         <developerConnection>scm:git:${project.scm.url}</developerConnection>
     </scm>
-    <distributionManagement>
-        <repository>
-            <id>aws-release</id>
-            <name>AWS Release Repository</name>
-            <url>s3://${bucket.name}/release</url>
-        </repository>
-        <snapshotRepository>
-            <id>aws-snapshot</id>
-            <name>AWS Snapshot Repository</name>
-            <url>s3://${bucket.name}/snapshot</url>
-        </snapshotRepository>
-    </distributionManagement>
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub Release Packages</name>
+			<url>https://maven.pkg.github.com/DX26-io/data-studio-gateway</url>
+		</repository>
+	</distributionManagement>
+	<repositories>
+		<repository>
+			<id>github</id>
+			<url>https://maven.pkg.github.com/DX26-io/*/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<properties>
 		<project.scm.url>https://github.com/DX26-io/data-studio-gateway.git</project.scm.url>
 		<aws-maven.version>5.0.0.RELEASE</aws-maven.version>
@@ -251,7 +255,7 @@
 		<dependency>
 			<groupId>com.project.bi</groupId>
 			<artifactId>flair-query-language</artifactId>
-			<version>2.0.0-SNAPSHOT</version>
+			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.querydsl</groupId>
@@ -603,58 +607,6 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-            <id>aws-release</id>
-            <url>s3://${bucket.name}/release</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>aws-snapshot</id>
-            <url>s3://${bucket.name}/snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<id>dev-azure-com-vizcentric-flair-bi</id>
-			<url>https://pkgs.dev.azure.com/VizCentric/_packaging/flair-bi/maven/v1</url>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<id>dev-azure-com-vizcentric-flair-commons</id>
-			<url>https://pkgs.dev.azure.com/VizCentric/_packaging/flair-commons/maven/v1</url>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<id>dev-azure-com-vizcentric-flair-protobuf-messages</id>
-			<url>https://pkgs.dev.azure.com/VizCentric/_packaging/flair-protobuf-messages/maven/v1</url>
-		</repository>
-	</repositories>
 	<build>
 		<extensions>
 			<extension>
