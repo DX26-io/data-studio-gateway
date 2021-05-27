@@ -38,6 +38,6 @@ public class WhereStatementSearchProcessor implements ISearchQLManagerProcessor 
 
     @Override
     public int getOrder() {
-        return 9;
+        return 8;
     }
 }
