@@ -32,13 +32,17 @@ public class SearchQLFinder {
     private final ValueRepository valueRepository;
     private final FeatureService featureService;
 
+    public SearchResult getAggregationFeatures(Long viewId, String featureName) {
+        return getAggregationFeatures(viewId, featureName, null);
+    }
+
     public SearchResult getAggregationFeatures(Long viewId, String featureName, FeatureType featureType) {
         View view = viewService.findOne(viewId);
         Long datasourceId = view.getViewDashboard().getDashboardDatasource().getId();
         List<Feature> features = featureService.getFeatures(QFeature.feature.datasource.id.eq(datasourceId));
 
         List<SearchResult.Item> searchItems = features.stream()
-                .filter(f -> f.getFeatureType() == featureType)
+                .filter(f -> featureType == null || f.getFeatureType() == featureType)
                 .map(v -> new SearchResult.Item(v.getName()))
                 .filter(v -> listOnFilter(v, featureName))
                 .collect(Collectors.toList());
