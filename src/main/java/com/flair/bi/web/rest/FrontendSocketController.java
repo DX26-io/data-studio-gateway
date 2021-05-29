@@ -34,7 +34,7 @@ public class FrontendSocketController {
 	) throws InterruptedException {
 		log.info("Search API called for view {}", viewId);
 
-		SearchResult results = searchService.search(viewId, request.getText());
+		SearchResult results = searchService.search(viewId, request.getText(), headerAccessor.getUser().getName());
 
 		List<SearchResponse.Item> items = results.getItems()
 				.stream()

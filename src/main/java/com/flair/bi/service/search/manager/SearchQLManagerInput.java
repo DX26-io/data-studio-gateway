@@ -9,4 +9,5 @@ import lombok.Data;
 public class SearchQLManagerInput {
     private final Long viewId;
     private final SearchResult compiledQuery;
+    private final String actorId;
 }

@@ -16,12 +16,13 @@ public class SearchService {
     private final SearchQLManager searchQLManager;
     private final SearchQLCompiler searchQLCompiler;
 
-    public SearchResult search(Long viewId, String text) {
+    public SearchResult search(Long viewId, String text, String actorId) {
         com.flair.bi.compiler.search.SearchResult compile = searchQLCompiler.compile(new SearchQuery(text));
 
         SearchQLManagerInput build = SearchQLManagerInput.builder()
                 .viewId(viewId)
                 .compiledQuery(compile)
+                .actorId(actorId)
                 .build();
 
         return searchQLManager.process(build);
