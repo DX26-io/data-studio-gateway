@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @Component
 public class WhereStatementSearchProcessor implements ISearchQLManagerProcessor {
 
+    private static final List<String> COMPARISONS = Arrays.asList("<", "<=", ">", ">=", "==", "=", "!=", "<>");
     private final SearchQLFinder searchQLFinder;
     private final GrpcQueryService grpcQueryService;
     private final ViewService viewService;
@@ -38,35 +39,52 @@ public class WhereStatementSearchProcessor implements ISearchQLManagerProcessor 
                     if (lastStatement.get().getState() == WhereConditionResult.State.FEATURE) {
                         return SearchQLManagerProcessorResult.of(searchQLFinder.getAggregationFeatures(input.getViewId(), lastStatement.get().getFeature()));
                     } else if (lastStatement.get().getState() == WhereConditionResult.State.STATEMENT) {
-                        View view = viewService.findOne(input.getViewId());
-                        Long datasourceId = view.getViewDashboard().getDashboardDatasource().getId();
-                        QueryDTO queryDTO = new QueryDTO();
-                        FieldDTO fieldDTO = new FieldDTO();
-                        fieldDTO.setName(lastStatement.get().getFeature());
-                        queryDTO.setFields(Arrays.asList(fieldDTO));
-                        queryDTO.setLimit(100L);
-                        queryDTO.setDistinct(true);
-                        QueryResponse queryResponse = grpcQueryService.getDataStream(SendGetDataDTO.builder()
-                                .datasourcesId(datasourceId)
-                                .viewId(input.getViewId())
-                                .userId(input.getActorId())
-                                .type("filters")
-                                .queryDTO(queryDTO)
-                                .build());
-                        Map data = JacksonUtil.fromString(queryResponse.getData(), Map.class);
-                        List list = (List) data.get("data");
-                        List<SearchResult.Item> collect = (List<SearchResult.Item>) list.stream().flatMap(l -> ((Map) l).values().stream())
-                                .map(i -> new SearchResult.Item((String) i))
-                                .filter(v -> searchQLFinder.listOnFilter((SearchResult.Item) v, lastStatement.get().getStatement()))
-                                .collect(Collectors.toList());
-                        return SearchQLManagerProcessorResult.of(new SearchResult(collect));
+                        return searchFeatureValues(input, lastStatement);
+                    } else if (lastStatement.get().getState() == WhereConditionResult.State.CONDITION) {
+                        return searchComparisonValues();
+                    } else if (lastStatement.get().getState() == WhereConditionResult.State.COMPLETED) {
+                        return SearchQLManagerProcessorResult.of(searchQLFinder.getAggregationFeatures(input.getViewId(), null));
                     }
+                } else {
+                    return SearchQLManagerProcessorResult.of(searchQLFinder.getAggregationFeatures(input.getViewId(), null));
                 }
-                return SearchQLManagerProcessorResult.of(searchQLFinder.getAggregationFeatures(input.getViewId(), null));
             }
+            return SearchQLManagerProcessorResult.ofEmpty();
         }
 
-        return SearchQLManagerProcessorResult.empty();
+        return SearchQLManagerProcessorResult.skip();
+    }
+
+    private SearchQLManagerProcessorResult searchComparisonValues() {
+        return SearchQLManagerProcessorResult.of(new SearchResult(
+                COMPARISONS.stream().map(a -> new SearchResult.Item(a)).collect(Collectors.toList())
+        ));
+    }
+
+    private SearchQLManagerProcessorResult searchFeatureValues(SearchQLManagerInput input, Optional<WhereConditionResult> lastStatement) {
+        View view = viewService.findOne(input.getViewId());
+        Long datasourceId = view.getViewDashboard().getDashboardDatasource().getId();
+        QueryDTO queryDTO = new QueryDTO();
+        FieldDTO fieldDTO = new FieldDTO();
+        fieldDTO.setName(lastStatement.get().getFeature());
+        queryDTO.setFields(Arrays.asList(fieldDTO));
+        queryDTO.setLimit(100L);
+        queryDTO.setDistinct(true);
+        QueryResponse queryResponse = grpcQueryService.getDataStream(SendGetDataDTO.builder()
+                .datasourcesId(datasourceId)
+                .viewId(input.getViewId())
+                .userId(input.getActorId())
+                .type("filters")
+                .queryDTO(queryDTO)
+                .build());
+        Map data = JacksonUtil.fromString(queryResponse.getData(), Map.class);
+        List list = (List) data.get("data");
+        List<SearchResult.Item> collect = (List<SearchResult.Item>) list.stream().flatMap(l -> ((Map) l).values().stream())
+                .filter(v -> searchQLFinder.listOnFilter((String)v, lastStatement.get().getStatement()))
+                .map(v -> "'" + v + "'")
+                .map(i -> new SearchResult.Item((String) i))
+                .collect(Collectors.toList());
+        return SearchQLManagerProcessorResult.of(new SearchResult(collect));
     }
 
     @Override

@@ -29,11 +29,10 @@ public class AggregationStatementSearchProcessor implements ISearchQLManagerProc
                 }
                 return SearchQLManagerProcessorResult.of(searchQLFinder.getAggregationFunctions(null));
             }
+            return SearchQLManagerProcessorResult.ofEmpty();
         } else {
             return SearchQLManagerProcessorResult.of(searchQLFinder.getAggregationFunctions(null));
         }
-
-        return SearchQLManagerProcessorResult.empty();
     }
 
     @Override

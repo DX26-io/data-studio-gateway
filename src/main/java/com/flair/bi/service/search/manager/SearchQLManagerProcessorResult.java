@@ -4,6 +4,8 @@ import com.flair.bi.service.search.SearchResult;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Collections;
+
 @Builder
 @Data
 public class SearchQLManagerProcessorResult {
@@ -13,8 +15,12 @@ public class SearchQLManagerProcessorResult {
         return new SearchQLManagerProcessorResult(searchResult);
     }
 
-    public static SearchQLManagerProcessorResult empty() {
+    public static SearchQLManagerProcessorResult skip() {
         return new SearchQLManagerProcessorResult(null);
+    }
+
+    public static SearchQLManagerProcessorResult ofEmpty() {
+        return of(new SearchResult(Collections.emptyList()));
     }
 
     public boolean stopProcessing() {

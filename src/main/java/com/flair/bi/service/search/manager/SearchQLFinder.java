@@ -71,4 +71,11 @@ public class SearchQLFinder {
         }
         return true;
     }
+
+    public boolean listOnFilter(String item, String searchText) {
+        if (StringUtils.isNotEmpty(searchText)) {
+            return item.toUpperCase().contains(searchText.toUpperCase());
+        }
+        return true;
+    }
 }
