@@ -5,30 +5,30 @@ import lombok.Setter;
 
 public class ReportDTO {
 
-	private String userid;
-	private String mail_body;
+	private String userId;
+	private String mailBody;
 	private String subject;
-	private String report_name;
-	private String title_name;
-	private String dashboard_name;
-	private String view_name;
+	private String reportName;
+	private String titleName;
+	private String dashboardName;
+	private String viewName;
 	@Getter
 	@Setter
-	private Long view_id;
-	private String share_link;
-	private String build_url;
+	private Long viewId;
+	private String shareLink;
+	private String buildUrl;
 	private boolean thresholdAlert;
 	private String createdDate;
 
 	public ReportDTO() {
 	}
 
-	public String getMail_body() {
-		return mail_body;
+	public String getMailBody() {
+		return mailBody;
 	}
 
-	public void setMail_body(String mail_body) {
-		this.mail_body = mail_body;
+	public void setMailBody(String mailBody) {
+		this.mailBody = mailBody;
 	}
 
 	public String getSubject() {
@@ -39,60 +39,60 @@ public class ReportDTO {
 		this.subject = subject;
 	}
 
-	public String getReport_name() {
-		return report_name;
+	public String getReportName() {
+		return reportName;
 	}
 
-	public void setReport_name(String report_name) {
-		this.report_name = report_name;
+	public void setReportName(String reportName) {
+		this.reportName = reportName;
 	}
 
-	public String getTitle_name() {
-		return title_name;
+	public String getTitleName() {
+		return titleName;
 	}
 
-	public void setTitle_name(String title_name) {
-		this.title_name = title_name;
+	public void setTitleName(String titleName) {
+		this.titleName = titleName;
 	}
 
-	public String getUserid() {
-		return userid;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setUserid(String userid) {
-		this.userid = userid;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
-	public String getDashboard_name() {
-		return dashboard_name;
+	public String getDashboardName() {
+		return dashboardName;
 	}
 
-	public void setDashboard_name(String dashboard_name) {
-		this.dashboard_name = dashboard_name;
+	public void setDashboardName(String dashboardName) {
+		this.dashboardName = dashboardName;
 	}
 
-	public String getView_name() {
-		return view_name;
+	public String getViewName() {
+		return viewName;
 	}
 
-	public void setView_name(String view_name) {
-		this.view_name = view_name;
+	public void setViewName(String viewName) {
+		this.viewName = viewName;
 	}
 
-	public String getShare_link() {
-		return share_link;
+	public String getShareLink() {
+		return shareLink;
 	}
 
-	public void setShare_link(String share_link) {
-		this.share_link = share_link;
+	public void setShareLink(String shareLink) {
+		this.shareLink = shareLink;
 	}
 
-	public String getBuild_url() {
-		return build_url;
+	public String getBuildUrl() {
+		return buildUrl;
 	}
 
-	public void setBuild_url(String build_url) {
-		this.build_url = build_url;
+	public void setBuildUrl(String buildUrl) {
+		this.buildUrl = buildUrl;
 	}
 
 	public boolean getThresholdAlert() {
@@ -114,16 +114,16 @@ public class ReportDTO {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder("ReportDTO{");
-		sb.append("userid='").append(userid).append('\'');
-		sb.append(", mail_body='").append(mail_body).append('\'');
+		sb.append("userId='").append(userId).append('\'');
+		sb.append(", mailBody='").append(mailBody).append('\'');
 		sb.append(", subject='").append(subject).append('\'');
-		sb.append(", report_name='").append(report_name).append('\'');
-		sb.append(", title_name='").append(title_name).append('\'');
-		sb.append(", dashboard_name='").append(dashboard_name).append('\'');
-		sb.append(", view_name='").append(view_name).append('\'');
-		sb.append(", view_id=").append(view_id);
-		sb.append(", share_link='").append(share_link).append('\'');
-		sb.append(", build_url='").append(build_url).append('\'');
+		sb.append(", reportName='").append(reportName).append('\'');
+		sb.append(", titleName='").append(titleName).append('\'');
+		sb.append(", dashboardName='").append(dashboardName).append('\'');
+		sb.append(", viewName='").append(viewName).append('\'');
+		sb.append(", viewId=").append(viewId);
+		sb.append(", shareLink='").append(shareLink).append('\'');
+		sb.append(", buildUrl='").append(buildUrl).append('\'');
 		sb.append(", thresholdAlert=").append(thresholdAlert);
 		sb.append(", createdDate=").append(createdDate);
 		sb.append('}');

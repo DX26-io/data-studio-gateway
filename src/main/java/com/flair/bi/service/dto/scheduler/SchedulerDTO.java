@@ -6,34 +6,34 @@ import lombok.Setter;
 
 public class SchedulerDTO {
 
-	private long datasourceid;
+	private long datasourceId;
 	private ReportDTO report;
-	private ReportLineItem report_line_item;
-	private AssignReport assign_report;
+	private ReportLineItem reportLineItem;
+	private AssignReport assignReport;
 	private Schedule schedule;
 	@Getter
 	@Setter
 	private String constraints;
 	private QueryDTO queryDTO;
-	private boolean putcall;
+	private boolean putCall;
 	private boolean emailReporter;
 	private Long dashboardId;
 
 	public SchedulerDTO() {
 	}
 
-	public SchedulerDTO(long datasourceid, ReportDTO report, ReportLineItem report_line_item,
-			AssignReport assign_report, Schedule schedule, QueryDTO queryDTO, boolean putcall, boolean emailReporter,
+	public SchedulerDTO(long datasourceId, ReportDTO report, ReportLineItem reportLineItem,
+			AssignReport assignReport, Schedule schedule, QueryDTO queryDTO, boolean putCall, boolean emailReporter,
 			String constraints) {
 		super();
-		this.datasourceid = datasourceid;
+		this.datasourceId = datasourceId;
 		this.report = report;
-		this.report_line_item = report_line_item;
-		this.assign_report = assign_report;
+		this.reportLineItem = reportLineItem;
+		this.assignReport = assignReport;
 		this.constraints = constraints;
 		this.schedule = schedule;
 		this.queryDTO = queryDTO;
-		this.putcall = putcall;
+		this.putCall = putCall;
 		this.emailReporter = emailReporter;
 	}
 
@@ -45,20 +45,20 @@ public class SchedulerDTO {
 		this.report = report;
 	}
 
-	public ReportLineItem getReport_line_item() {
-		return report_line_item;
+	public ReportLineItem getReportLineItem() {
+		return reportLineItem;
 	}
 
-	public void setReport_line_item(ReportLineItem report_line_item) {
-		this.report_line_item = report_line_item;
+	public void setReportLineItem(ReportLineItem reportLineItem) {
+		this.reportLineItem = reportLineItem;
 	}
 
-	public AssignReport getAssign_report() {
-		return assign_report;
+	public AssignReport getAssignReport() {
+		return assignReport;
 	}
 
-	public void setAssign_report(AssignReport assign_report) {
-		this.assign_report = assign_report;
+	public void setAssignReport(AssignReport assignReport) {
+		this.assignReport = assignReport;
 	}
 
 	public Schedule getSchedule() {
@@ -69,12 +69,12 @@ public class SchedulerDTO {
 		this.schedule = schedule;
 	}
 
-	public long getDatasourceid() {
-		return datasourceid;
+	public long getDatasourceId() {
+		return datasourceId;
 	}
 
-	public void setDatasourceid(long datasourceid) {
-		this.datasourceid = datasourceid;
+	public void setDatasourceId(long datasourceId) {
+		this.datasourceId = datasourceId;
 	}
 
 	public QueryDTO getQueryDTO() {
@@ -85,12 +85,12 @@ public class SchedulerDTO {
 		this.queryDTO = queryDTO;
 	}
 
-	public boolean getPutcall() {
-		return putcall;
+	public boolean getPutCall() {
+		return putCall;
 	}
 
-	public void setPutcall(boolean putcall) {
-		this.putcall = putcall;
+	public void setPutCall(boolean putCall) {
+		this.putCall = putCall;
 	}
 
 	public boolean getEmailReporter() {
@@ -99,9 +99,9 @@ public class SchedulerDTO {
 
 	@Override
 	public String toString() {
-		return "SchedulerDTO [datasourceid=" + datasourceid + ", report=" + report + ", report_line_item="
-				+ report_line_item + ", assign_report=" + assign_report + ", schedule=" + schedule + ", queryDTO="
-				+ queryDTO + ", putcall=" + putcall + ", emailReporter=" + emailReporter + ", dashboardId=" + dashboardId + "]";
+		return "SchedulerDTO [datasourceId=" + datasourceId + ", report=" + report + ", reportLineItem="
+				+ reportLineItem + ", assignReport=" + assignReport + ", schedule=" + schedule + ", queryDTO="
+				+ queryDTO + ", putCall=" + putCall + ", emailReporter=" + emailReporter + ", dashboardId=" + dashboardId + "]";
 	}
 
 	public Long getDashboardId() {
