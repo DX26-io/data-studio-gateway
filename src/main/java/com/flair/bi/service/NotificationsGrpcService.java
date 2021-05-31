@@ -300,7 +300,7 @@ public class NotificationsGrpcService implements INotificationsGrpcService {
         return ScheduleReport.newBuilder()
                 .setReport(
                         Report.newBuilder()
-                                .setUserid(orEmpty(dto.getReport().getUserId()))
+                                .setUserId(orEmpty(dto.getReport().getUserId()))
                                 .setDashboardName(orEmpty(dto.getReport().getDashboardName()))
                                 .setViewName(orEmpty(dto.getReport().getViewName()))
                                 .setShareLink(orEmpty(dto.getReport().getShareLink()))
@@ -315,14 +315,14 @@ public class NotificationsGrpcService implements INotificationsGrpcService {
                 )
                 .setReportLineItem(
                         com.flair.bi.messages.report.ReportLineItem.newBuilder()
-                                .setVisualizationid(orEmpty(dto.getReportLineItem().getVisualizationId()))
-                                .addAllDimension(Arrays.asList(dto.getReportLineItem().getDimensions()))
-                                .addAllMeasure(Arrays.asList(dto.getReportLineItem().getMeasures()))
-                                .setVisualization(orEmpty(dto.getReportLineItem().getVisualizationType()))
+                                .setVisualizationId(orEmpty(dto.getReportLineItem().getVisualizationId()))
+                                .addAllDimensions(Arrays.asList(dto.getReportLineItem().getDimensions()))
+                                .addAllMeasures(Arrays.asList(dto.getReportLineItem().getMeasures()))
+                                .setVisualizationType(orEmpty(dto.getReportLineItem().getVisualizationType()))
                                 .build()
                 )
 				.setAssignReport(com.flair.bi.messages.report.AssignReport.newBuilder()
-						.addAllChannel(Arrays.asList(dto.getAssignReport().getChannels()))
+						.addAllChannels(Arrays.asList(dto.getAssignReport().getChannels()))
 						.setSlackAPIToken(orEmpty(dto.getAssignReport().getSlackAPIToken()))
 						.setChannelId(orEmpty(dto.getAssignReport().getChannelId()))
 						.setStrideAPIToken(orEmpty(dto.getAssignReport().getStrideAPIToken()))
@@ -330,7 +330,7 @@ public class NotificationsGrpcService implements INotificationsGrpcService {
 						.setStrideConversationId(orEmpty(dto.getAssignReport().getStrideConversationId()))
 						.setCommunicationList(com.flair.bi.messages.report.CommunicationList.newBuilder()
 								.addAllTeams(Arrays.asList(dto.getAssignReport().getCommunicationList().getTeams()))
-								.addAllEmail(Arrays.stream(dto.getAssignReport().getCommunicationList().getEmails())
+								.addAllEmails(Arrays.stream(dto.getAssignReport().getCommunicationList().getEmails())
 										.map(i -> Email.newBuilder().setUserEmail(orEmpty(i.getUserEmail()))
 												.setUserName(orEmpty(i.getUserName())).build())
 										.collect(toList()))
@@ -362,28 +362,28 @@ public class NotificationsGrpcService implements INotificationsGrpcService {
         report.setShareLink(scheduleReport.getReport().getShareLink());
         report.setSubject(scheduleReport.getReport().getSubject());
         report.setTitleName(scheduleReport.getReport().getTitleName());
-        report.setUserId(scheduleReport.getReport().getUserid());
+        report.setUserId(scheduleReport.getReport().getUserId());
         report.setViewName(scheduleReport.getReport().getViewName());
         report.setViewId(Long.valueOf(scheduleReport.getReport().getViewId()));
         report.setThresholdAlert(scheduleReport.getReport().getThresholdAlert());
         report.setCreatedDate(scheduleReport.getReport().getCreatedDate());
         responseDTO.setReport(report);
         ReportLineItem reportLineItem = new ReportLineItem();
-        reportLineItem.setDimensions(scheduleReport.getReportLineItem().getDimensionList().toArray(new String[]{}));
-        reportLineItem.setMeasures(scheduleReport.getReportLineItem().getMeasureList().toArray(new String[]{}));
-        reportLineItem.setVisualizationType(scheduleReport.getReportLineItem().getVisualization());
-        reportLineItem.setVisualizationId(scheduleReport.getReportLineItem().getVisualizationid());
+        reportLineItem.setDimensions(scheduleReport.getReportLineItem().getDimensionsList().toArray(new String[]{}));
+        reportLineItem.setMeasures(scheduleReport.getReportLineItem().getMeasuresList().toArray(new String[]{}));
+        reportLineItem.setVisualizationType(scheduleReport.getReportLineItem().getVisualizationType());
+        reportLineItem.setVisualizationId(scheduleReport.getReportLineItem().getVisualizationId());
         responseDTO.setReportLineItem(reportLineItem);
         responseDTO.setQuery(scheduleReport.getQuery());
         AssignReport assignReport = new AssignReport();
         CommunicationList communicationList= new CommunicationList();
-        communicationList.setEmails(scheduleReport.getAssignReport().getCommunicationList().getEmailList()
+        communicationList.setEmails(scheduleReport.getAssignReport().getCommunicationList().getEmailsList()
                 .stream()
                 .map(item -> toEmailDto(item))
                 .collect(toList()).toArray(new emailsDTO[]{}));
         communicationList.setTeams(scheduleReport.getAssignReport().getCommunicationList().getTeamsList().toArray(new Integer[]{}));
         assignReport.setCommunicationList(communicationList);
-        assignReport.setChannels(scheduleReport.getAssignReport().getChannelList().toArray(new String[]{}));;
+        assignReport.setChannels(scheduleReport.getAssignReport().getChannelsList().toArray(new String[]{}));;
         assignReport.setChannelId(scheduleReport.getAssignReport().getChannelId());
         assignReport.setSlackAPIToken(scheduleReport.getAssignReport().getSlackAPIToken());
         assignReport.setStrideAPIToken(scheduleReport.getAssignReport().getStrideAPIToken());
