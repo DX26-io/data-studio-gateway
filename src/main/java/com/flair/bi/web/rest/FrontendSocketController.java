@@ -1,5 +1,6 @@
 package com.flair.bi.web.rest;
 
+import com.flair.bi.service.search.SearchItemSelectedResult;
 import com.flair.bi.service.search.SearchResult;
 import com.flair.bi.service.search.SearchService;
 import lombok.Data;
@@ -44,6 +45,15 @@ public class FrontendSocketController {
 		return new SearchResponse(items);
 	}
 
+	@MessageMapping("/view/{viewId}/search-item-selected")
+	@SendToUser("/exchange/search-item-selected")
+	public SearchItemSelectedResult searchItemSelected(
+			@Payload SearchItemSelectedRequest request
+	) throws InterruptedException {
+		log.info("Search Item Selected API called {}", request);
+		return searchService.searchItemSelected(request.getText(), request.getItem());
+	}
+
 	@MessageExceptionHandler
 	@SendToUser("/exchange/errors")
 	public String handleException(Throwable exception) {
@@ -54,6 +64,12 @@ public class FrontendSocketController {
 	@Data
 	private static class SearchRequest {
 		private String text;
+	}
+
+	@Data
+	private static class SearchItemSelectedRequest {
+		private String text;
+		private String item;
 	}
 
 	@Data

@@ -8,6 +8,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,6 +33,17 @@ public class SearchService {
         return searchQLManager.process(build);
     }
 
-
+    public SearchItemSelectedResult searchItemSelected(String text, String item) {
+        Pattern pattern = Pattern.compile("\\w+");
+        Matcher matcher = pattern.matcher(text);
+        Optional<MatchResult> match = matcher.results().reduce((first, second) -> second);
+        if (match.isPresent() && text.endsWith(match.get().group())) {
+            text = text.substring(0, text.length() - match.get().group().length()) + item;
+        } else {
+            text = text + item;
+        }
+        log.info("Last expr {}", text);
+        return new SearchItemSelectedResult(text);
+    }
 
 }
