@@ -3,6 +3,7 @@ package com.flair.bi.web.rest;
 import com.flair.bi.service.search.SearchItemSelectedResult;
 import com.flair.bi.service.search.SearchResult;
 import com.flair.bi.service.search.SearchService;
+import com.flair.bi.service.search.deserializers.DeserializedSearchResult;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,12 +38,12 @@ public class FrontendSocketController {
 
 		SearchResult results = searchService.search(viewId, request.getText(), headerAccessor.getUser().getName());
 
-		List<SearchResponse.Item> items = results.getItems()
+		List<SearchResponse.Item> items = results.getSearchQLResult().getItems()
 				.stream()
 				.map(item -> new SearchResponse.Item(item.getText()))
 				.collect(Collectors.toList());
 
-		return new SearchResponse(items);
+		return new SearchResponse(items, results.getDeserializedSearchResult());
 	}
 
 	@MessageMapping("/view/{viewId}/search-item-selected")
@@ -76,6 +77,7 @@ public class FrontendSocketController {
 	@RequiredArgsConstructor
 	private static class SearchResponse {
 		private final List<Item> autoSuggestion;
+		private final DeserializedSearchResult searchStruct;
 
 		@Data
 		@RequiredArgsConstructor

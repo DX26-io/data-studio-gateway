@@ -1,6 +1,6 @@
 package com.flair.bi.service.search.manager;
 
-import com.flair.bi.service.search.SearchResult;
+import com.flair.bi.service.search.SearchQLResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,14 +15,14 @@ import java.util.List;
 public class SearchQLManager {
     private final List<ISearchQLManagerProcessor> processors;
 
-    public SearchResult process(SearchQLManagerInput input) {
+    public SearchQLResult process(SearchQLManagerInput input) {
         return processors.stream()
                 .sorted(Comparator.comparingInt(ISearchQLManagerProcessor::getOrder))
                 .map(p -> p.process(input))
                 .filter(p -> p.stopProcessing())
                 .findFirst()
-                .map(p -> p.getSearchResult())
-                .orElseGet(() -> new SearchResult(Collections.emptyList()));
+                .map(p -> p.getSearchQLResult())
+                .orElseGet(() -> new SearchQLResult(Collections.emptyList()));
     }
 
 }

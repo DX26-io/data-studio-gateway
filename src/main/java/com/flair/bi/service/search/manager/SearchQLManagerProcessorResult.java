@@ -1,6 +1,6 @@
 package com.flair.bi.service.search.manager;
 
-import com.flair.bi.service.search.SearchResult;
+import com.flair.bi.service.search.SearchQLResult;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,10 +9,10 @@ import java.util.Collections;
 @Builder
 @Data
 public class SearchQLManagerProcessorResult {
-    private final SearchResult searchResult;
+    private final SearchQLResult searchQLResult;
 
-    public static SearchQLManagerProcessorResult of(SearchResult searchResult) {
-        return new SearchQLManagerProcessorResult(searchResult);
+    public static SearchQLManagerProcessorResult of(SearchQLResult searchQLResult) {
+        return new SearchQLManagerProcessorResult(searchQLResult);
     }
 
     public static SearchQLManagerProcessorResult skip() {
@@ -20,10 +20,10 @@ public class SearchQLManagerProcessorResult {
     }
 
     public static SearchQLManagerProcessorResult ofEmpty() {
-        return of(new SearchResult(Collections.emptyList()));
+        return of(new SearchQLResult(Collections.emptyList()));
     }
 
     public boolean stopProcessing() {
-        return searchResult != null;
+        return searchQLResult != null;
     }
 }

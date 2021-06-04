@@ -2,6 +2,8 @@ package com.flair.bi.service.search;
 
 import com.flair.bi.compiler.search.SearchQLCompiler;
 import com.flair.bi.compiler.search.SearchQuery;
+import com.flair.bi.service.search.deserializers.DeserializedSearchResult;
+import com.flair.bi.service.search.deserializers.SearchQLDeserializer;
 import com.flair.bi.service.search.manager.SearchQLManager;
 import com.flair.bi.service.search.manager.SearchQLManagerInput;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.regex.Pattern;
 public class SearchService {
 
     private final SearchQLManager searchQLManager;
+    private final SearchQLDeserializer searchQLDeserializer;
     private final SearchQLCompiler searchQLCompiler;
 
     public SearchResult search(Long viewId, String text, String actorId) {
@@ -30,7 +33,11 @@ public class SearchService {
                 .actorId(actorId)
                 .build();
 
-        return searchQLManager.process(build);
+        DeserializedSearchResult deserializedSearchResult = searchQLDeserializer.deserialize(compile);
+
+        SearchQLResult searchQLResult = searchQLManager.process(build);
+
+        return new SearchResult(searchQLResult, deserializedSearchResult);
     }
 
     public SearchItemSelectedResult searchItemSelected(String text, String item) {

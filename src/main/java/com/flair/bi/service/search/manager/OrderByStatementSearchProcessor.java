@@ -1,7 +1,7 @@
 package com.flair.bi.service.search.manager;
 
 import com.flair.bi.compiler.search.OrderByStatementResult;
-import com.flair.bi.service.search.SearchResult;
+import com.flair.bi.service.search.SearchQLResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -32,8 +32,8 @@ public class OrderByStatementSearchProcessor implements ISearchQLManagerProcesso
     }
 
     private SearchQLManagerProcessorResult searchDirectionValues() {
-        return SearchQLManagerProcessorResult.of(new SearchResult(
-                DIRECTIONS.stream().map(a -> new SearchResult.Item(a)).collect(Collectors.toList())
+        return SearchQLManagerProcessorResult.of(new SearchQLResult(
+                DIRECTIONS.stream().map(a -> new SearchQLResult.Item(a)).collect(Collectors.toList())
         ));
     }
 

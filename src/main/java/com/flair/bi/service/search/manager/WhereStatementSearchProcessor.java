@@ -7,7 +7,7 @@ import com.flair.bi.domain.View;
 import com.flair.bi.messages.QueryResponse;
 import com.flair.bi.service.GrpcQueryService;
 import com.flair.bi.service.SendGetDataDTO;
-import com.flair.bi.service.search.SearchResult;
+import com.flair.bi.service.search.SearchQLResult;
 import com.flair.bi.view.ViewService;
 import com.project.bi.query.dto.FieldDTO;
 import com.project.bi.query.dto.QueryDTO;
@@ -56,8 +56,8 @@ public class WhereStatementSearchProcessor implements ISearchQLManagerProcessor 
     }
 
     private SearchQLManagerProcessorResult searchComparisonValues() {
-        return SearchQLManagerProcessorResult.of(new SearchResult(
-                COMPARISONS.stream().map(a -> new SearchResult.Item(a)).collect(Collectors.toList())
+        return SearchQLManagerProcessorResult.of(new SearchQLResult(
+                COMPARISONS.stream().map(a -> new SearchQLResult.Item(a)).collect(Collectors.toList())
         ));
     }
 
@@ -79,12 +79,12 @@ public class WhereStatementSearchProcessor implements ISearchQLManagerProcessor 
                 .build());
         Map data = JacksonUtil.fromString(queryResponse.getData(), Map.class);
         List list = (List) data.get("data");
-        List<SearchResult.Item> collect = (List<SearchResult.Item>) list.stream().flatMap(l -> ((Map) l).values().stream())
+        List<SearchQLResult.Item> collect = (List<SearchQLResult.Item>) list.stream().flatMap(l -> ((Map) l).values().stream())
                 .filter(v -> searchQLFinder.listOnFilter((String)v, lastStatement.get().getStatement()))
                 .map(v -> "'" + v + "'")
-                .map(i -> new SearchResult.Item((String) i))
+                .map(i -> new SearchQLResult.Item((String) i))
                 .collect(Collectors.toList());
-        return SearchQLManagerProcessorResult.of(new SearchResult(collect));
+        return SearchQLManagerProcessorResult.of(new SearchQLResult(collect));
     }
 
     @Override
