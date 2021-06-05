@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +22,7 @@ public class SearchService {
     private final SearchQLManager searchQLManager;
     private final SearchQLDeserializer searchQLDeserializer;
     private final SearchQLCompiler searchQLCompiler;
+    private static final Pattern PATTERN = Pattern.compile("\\w+");
 
     public SearchResult search(Long viewId, String text, String actorId) {
         com.flair.bi.compiler.search.SearchResult compile = searchQLCompiler.compile(new SearchQuery(text));
@@ -37,20 +37,26 @@ public class SearchService {
 
         SearchQLResult searchQLResult = searchQLManager.process(build);
 
-        return new SearchResult(searchQLResult, deserializedSearchResult);
+        return new SearchResult(text, searchQLResult, deserializedSearchResult);
     }
 
-    public SearchItemSelectedResult searchItemSelected(String text, String item) {
-        Pattern pattern = Pattern.compile("\\w+");
-        Matcher matcher = pattern.matcher(text);
-        Optional<MatchResult> match = matcher.results().reduce((first, second) -> second);
-        if (match.isPresent() && text.endsWith(match.get().group())) {
-            text = text.substring(0, text.length() - match.get().group().length()) + item;
+    public SearchItemSelectedResult searchItemSelected(String text, String item, Integer cursor) {
+        Matcher matcher = PATTERN.matcher(text);
+
+        MatchResult selectedResult = matcher.results()
+                .filter(result -> cursor >= result.start() && cursor <= result.end())
+                .findFirst()
+                .orElse(null);
+
+        String result;
+        if (selectedResult == null) {
+            result = text + item;
         } else {
-            text = text + item;
+            result = text.substring(0, selectedResult.start()) + item + text.substring(selectedResult.end());
         }
-        log.info("Last expr {}", text);
-        return new SearchItemSelectedResult(text);
+
+        log.info("Last expr {}", result);
+        return new SearchItemSelectedResult(result);
     }
 
 }

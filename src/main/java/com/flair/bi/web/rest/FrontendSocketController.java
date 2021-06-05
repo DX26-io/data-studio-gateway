@@ -48,11 +48,22 @@ public class FrontendSocketController {
 
 	@MessageMapping("/view/{viewId}/search-item-selected")
 	@SendToUser("/exchange/search-item-selected")
-	public SearchItemSelectedResult searchItemSelected(
-			@Payload SearchItemSelectedRequest request
+	public SearchItemSelectedControllerResponse searchItemSelected(
+			@DestinationVariable Long viewId,
+			@Payload SearchItemSelectedRequest request,
+			SimpMessageHeaderAccessor headerAccessor
 	) throws InterruptedException {
-		log.info("Search Item Selected API called {}", request);
-		return searchService.searchItemSelected(request.getText(), request.getItem());
+		log.info("Search Item Selected API called {} viewId {}", request, viewId);
+		SearchItemSelectedResult searchItemSelectedResult = searchService.searchItemSelected(request.getText(), request.getItem(), request.getCursor());
+
+		SearchResult results = searchService.search(viewId, searchItemSelectedResult.getText(), headerAccessor.getUser().getName());
+
+		List<SearchResponse.Item> items = results.getSearchQLResult().getItems()
+				.stream()
+				.map(item -> new SearchResponse.Item(item.getText()))
+				.collect(Collectors.toList());
+
+		return new SearchItemSelectedControllerResponse(searchItemSelectedResult.getText(), request.getCursor(), items, results.getDeserializedSearchResult());
 	}
 
 	@MessageExceptionHandler
@@ -71,6 +82,7 @@ public class FrontendSocketController {
 	private static class SearchItemSelectedRequest {
 		private String text;
 		private String item;
+		private Integer cursor;
 	}
 
 	@Data
@@ -84,6 +96,15 @@ public class FrontendSocketController {
 		private static class Item {
 			private final String text;
 		}
+	}
+
+	@Data
+	@RequiredArgsConstructor
+	private static class SearchItemSelectedControllerResponse {
+		private final String text;
+		private final Integer cursor;
+		private final List<SearchResponse.Item> autoSuggestion;
+		private final DeserializedSearchResult searchStruct;
 	}
 
 }

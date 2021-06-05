@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @RequiredArgsConstructor
 public class SearchResult {
+    private final String text;
     private final SearchQLResult searchQLResult;
     private final DeserializedSearchResult deserializedSearchResult;
 }
