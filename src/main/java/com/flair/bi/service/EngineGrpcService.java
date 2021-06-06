@@ -107,6 +107,11 @@ public class EngineGrpcService implements IEngineGrpcService {
 	}
 
 	@Override
+	public QueryResponse getData(Query query) {
+		return getQueryStub().getData(query);
+	}
+
+	@Override
 	public GetAllConnectionsResponse getAllConnections(Long realmId, String linkId, Long connectionType) {
 		return getConnectionStub().getAllConnections(GetAllConnectionsRequest.newBuilder()
 				.setRealmId(realmId)

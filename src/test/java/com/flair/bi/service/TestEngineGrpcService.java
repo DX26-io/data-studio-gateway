@@ -35,6 +35,11 @@ public class TestEngineGrpcService implements IEngineGrpcService {
 	}
 
 	@Override
+	public QueryResponse getData(Query query) {
+		return null;
+	}
+
+	@Override
 	public GetAllConnectionsResponse getAllConnections(Long realmId, String linkId, Long connectionType) {
 		return null;
 	}

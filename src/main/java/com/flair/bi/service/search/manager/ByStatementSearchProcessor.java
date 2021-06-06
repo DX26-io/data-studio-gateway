@@ -26,7 +26,7 @@ public class ByStatementSearchProcessor implements ISearchQLManagerProcessor {
             return SearchQLManagerProcessorResult.of(searchQLFinder.getAggregationFeatures(input.getViewId(), featureName, FeatureType.DIMENSION));
         }
 
-        return SearchQLManagerProcessorResult.empty();
+        return SearchQLManagerProcessorResult.skip();
     }
 
     @Override

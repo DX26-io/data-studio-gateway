@@ -21,6 +21,8 @@ public interface IEngineGrpcService {
 
 	StreamObserver<Query> getDataStream(StreamObserver<QueryResponse> responseObserver);
 
+	QueryResponse getData(Query query);
+
 	GetAllConnectionsResponse getAllConnections(Long realmId, String linkId, Long connectionType);
 
 	RunQueryResponse runQuery(Query query, boolean metaRetrieved);
