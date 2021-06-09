@@ -79,8 +79,9 @@ public class WhereStatementSearchProcessor implements ISearchQLManagerProcessor 
                 .build());
         Map data = JacksonUtil.fromString(queryResponse.getData(), Map.class);
         List list = (List) data.get("data");
+        String lastStatementText = lastStatement.get().getStatements().isEmpty() ? null : lastStatement.get().getStatements().get(lastStatement.get().getStatements().size() - 1);
         List<SearchQLResult.Item> collect = (List<SearchQLResult.Item>) list.stream().flatMap(l -> ((Map) l).values().stream())
-                .filter(v -> searchQLFinder.listOnFilter((String)v, lastStatement.get().getStatement()))
+                .filter(v -> searchQLFinder.listOnFilter((String)v, lastStatementText))
                 .map(v -> "'" + v + "'")
                 .map(i -> new SearchQLResult.Item((String) i))
                 .collect(Collectors.toList());
