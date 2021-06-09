@@ -45,7 +45,7 @@ public class SearchQLDeserializer {
         return new DeserializedWhereStatementResult(
                 result.getConditions()
                         .stream()
-                        .map(c -> new DeserializedWhereConditionResult(c.getFeature(), c.getCondition(), c.getStatement()))
+                        .map(c -> new DeserializedWhereConditionResult(c.getFeature(), c.getCondition(), c.getStatement(), c.getStatements()))
                         .collect(Collectors.toList())
         );
     }
