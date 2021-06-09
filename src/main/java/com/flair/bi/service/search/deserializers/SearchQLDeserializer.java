@@ -17,8 +17,10 @@ public class SearchQLDeserializer {
     public DeserializedSearchResult deserialize(SearchResult compile) {
         DeserializedSearchResult deserializedSearchResult = new DeserializedSearchResult();
 
-        compile.getResults()
-                .forEach(r -> parseResult(r, deserializedSearchResult));
+        compile.asAggregationStatementsResult().ifPresent(ag -> parseResult(ag, deserializedSearchResult));
+        compile.asByStatementResult().ifPresent(ag -> parseResult(ag, deserializedSearchResult));
+        compile.asWhereStatementResult().ifPresent(ag -> parseResult(ag, deserializedSearchResult));
+        compile.asOrderByStatementResult().ifPresent(ag -> parseResult(ag, deserializedSearchResult));
 
         return deserializedSearchResult;
     }
