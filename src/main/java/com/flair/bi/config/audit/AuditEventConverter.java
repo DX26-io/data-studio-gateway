@@ -1,5 +1,12 @@
 package com.flair.bi.config.audit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flair.bi.domain.PersistentAuditEvent;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.actuate.audit.AuditEvent;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.stereotype.Component;
+
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,15 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.boot.actuate.audit.AuditEvent;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.stereotype.Component;
-
-import com.flair.bi.domain.PersistentAuditEvent;
-
 @Component
+@RequiredArgsConstructor
 public class AuditEventConverter {
 
+	private final ObjectMapper objectMapper;
 	/**
 	 * Convert a list of PersistentAuditEvent to a list of AuditEvent
 	 *
@@ -84,16 +87,26 @@ public class AuditEventConverter {
 				// Extract the data that will be saved.
 				if (object instanceof WebAuthenticationDetails) {
 					WebAuthenticationDetails authenticationDetails = (WebAuthenticationDetails) object;
-					results.put("remoteAddress", authenticationDetails.getRemoteAddress());
-					results.put("sessionId", authenticationDetails.getSessionId());
+					HashMap<String, Object> params = new HashMap<>();
+					params.put("remoteAddress", authenticationDetails.getRemoteAddress());
+					params.put("sessionId", authenticationDetails.getSessionId());
+					results.put(entry.getKey(), toJson(params));
 				} else if (object != null) {
-					results.put(entry.getKey(), object.toString());
+					results.put(entry.getKey(), toJson(object));
 				} else {
-					results.put(entry.getKey(), "null");
+					results.put(entry.getKey(), null);
 				}
 			}
 		}
 
 		return results;
+	}
+
+	private String toJson(Object object) {
+		try {
+			return objectMapper.writeValueAsString(object);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

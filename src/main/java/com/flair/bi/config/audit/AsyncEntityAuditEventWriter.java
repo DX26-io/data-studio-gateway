@@ -1,19 +1,21 @@
 package com.flair.bi.config.audit;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-import org.springframework.util.ReflectionUtils;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flair.bi.domain.AbstractAuditingEntity;
 import com.flair.bi.domain.EntityAuditEvent;
 import com.flair.bi.repository.EntityAuditEventRepository;
-
+import com.flair.bi.security.SecurityUtils;
+import com.flair.bi.security.UserAuthInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
 
 /**
  * Async Entity Audit Event writer This is invoked by Hibernate entity listeners
@@ -35,8 +37,10 @@ public class AsyncEntityAuditEventWriter {
 	 * @param action action
 	 */
 	@Async
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void writeAuditEvent(Object target, EntityAuditAction action) {
-		log.debug("-------------- Post {} audit  --------------", action.value());
+		log.debug("-------------- Post {} audit  -------------- entity {}",
+				action.value(), target.getClass().getSimpleName());
 		try {
 			EntityAuditEvent auditedEntity = prepareAuditEntity(target, action);
 
@@ -73,6 +77,8 @@ public class AsyncEntityAuditEventWriter {
 			// returning null as we dont want to raise an application exception here
 			return null;
 		}
+		UserAuthInfo userAuth = SecurityUtils.getUserAuth();
+		auditedEntity.setRealmId(userAuth != null ? userAuth.getRealmId() : null);
 		auditedEntity.setEntityId(entityId);
 		auditedEntity.setEntityValue(entityData);
 		final AbstractAuditingEntity abstractAuditEntity = (AbstractAuditingEntity) entity;
