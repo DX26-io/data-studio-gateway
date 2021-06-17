@@ -1,8 +1,7 @@
 package com.flair.bi.domain;
 
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.Objects;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,9 +12,9 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
+import java.io.Serializable;
+import java.time.ZonedDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "jhi_entity_audit_event")
@@ -56,6 +55,9 @@ public class EntityAuditEvent implements Serializable {
 	@NotNull
 	@Column(name = "modified_date", nullable = false)
 	private ZonedDateTime modifiedDate;
+
+	@Column(name = "realm_id")
+	private Long realmId;
 
 	public Long getId() {
 		return id;
@@ -146,4 +148,11 @@ public class EntityAuditEvent implements Serializable {
 				+ '}';
 	}
 
+	public Long getRealmId() {
+		return realmId;
+	}
+
+	public void setRealmId(Long realmId) {
+		this.realmId = realmId;
+	}
 }

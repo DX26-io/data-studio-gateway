@@ -1,10 +1,8 @@
 package com.flair.bi.repository;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.List;
-
+import com.flair.bi.config.audit.AuditEventConverter;
+import com.flair.bi.domain.PersistentAuditEvent;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
@@ -12,10 +10,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.flair.bi.config.audit.AuditEventConverter;
-import com.flair.bi.domain.PersistentAuditEvent;
-
-import lombok.RequiredArgsConstructor;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
 
 /**
  * An implementation of Spring Boot's AuditEventRepository.
@@ -23,8 +21,6 @@ import lombok.RequiredArgsConstructor;
 @Repository
 @RequiredArgsConstructor
 public class CustomAuditEventRepository implements AuditEventRepository {
-
-	private static final String AUTHORIZATION_FAILURE = "AUTHORIZATION_FAILURE";
 
 	private static final String ANONYMOUS_USER = "anonymoususer";
 
@@ -35,7 +31,7 @@ public class CustomAuditEventRepository implements AuditEventRepository {
 	@Override
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void add(AuditEvent event) {
-		if (!AUTHORIZATION_FAILURE.equals(event.getType()) && !ANONYMOUS_USER.equals(event.getPrincipal())) {
+		if (!ANONYMOUS_USER.equalsIgnoreCase(event.getPrincipal())) {
 			PersistentAuditEvent persistentAuditEvent = new PersistentAuditEvent();
 			persistentAuditEvent.setPrincipal(StringUtils.abbreviate(event.getPrincipal(), 50));
 			persistentAuditEvent.setAuditEventType(event.getType());

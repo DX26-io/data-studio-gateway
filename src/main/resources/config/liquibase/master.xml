@@ -111,5 +111,6 @@
     <include file="config/liquibase/changelog/20210127023012_multi_realm.xml" relativeToChangelogFile="false" />
     <include file="config/liquibase/changelog/20210220023012_migrate_realm.xml" relativeToChangelogFile="false" />
     <include file="config/liquibase/changelog/20210220023013_cleanup_realm.xml" relativeToChangelogFile="false" />
+    <include file="config/liquibase/changelog/20210616023013_audit_log_realm.xml" relativeToChangelogFile="false" />
 </databaseChangeLog>
 <!--@formatter:on-->

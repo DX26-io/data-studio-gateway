@@ -9,4 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserAuthInfo {
     private Long realmId;
+
+    @Override
+    public String toString() {
+        return "{\"realmId\":" + realmId + "}";
+    }
 }

@@ -1,14 +1,16 @@
 package com.flair.bi.config.audit;
 
-import javax.persistence.PostPersist;
-import javax.persistence.PostRemove;
-import javax.persistence.PostUpdate;
-
+import com.flair.bi.domain.Dashboard;
+import com.flair.bi.domain.View;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import lombok.extern.slf4j.Slf4j;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
 
 @Slf4j
 public class EntityAuditEventListener extends AuditingEntityListener {
@@ -17,6 +19,21 @@ public class EntityAuditEventListener extends AuditingEntityListener {
 
 	static void setBeanFactory(BeanFactory beanFactory) {
 		EntityAuditEventListener.beanFactory = beanFactory;
+	}
+
+	@PostLoad
+	public void onPostLoad(Object target) {
+		try {
+			if (target instanceof View || target instanceof Dashboard) {
+				AsyncEntityAuditEventWriter asyncEntityAuditEventWriter = beanFactory
+						.getBean(AsyncEntityAuditEventWriter.class);
+				asyncEntityAuditEventWriter.writeAuditEvent(target, EntityAuditAction.LOAD);
+			}
+		} catch (NoSuchBeanDefinitionException e) {
+			log.error("No bean found for AsyncEntityAuditEventWriter");
+		} catch (Exception e) {
+			log.error("Exception while persisting load audit entity", e);
+		}
 	}
 
 	@PostPersist
