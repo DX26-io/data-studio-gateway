@@ -1,7 +1,14 @@
 package com.flair.bi.domain.value;
 
-import java.io.Serializable;
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.flair.bi.domain.property.SelectProperty;
+import com.flair.bi.domain.propertytype.SelectPropertyType;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -19,18 +26,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.hibernate.annotations.Immutable;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.flair.bi.domain.property.SelectProperty;
-import com.flair.bi.domain.propertytype.SelectPropertyType;
-
-import lombok.Getter;
-import lombok.Setter;
+import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Immutable
@@ -85,6 +82,8 @@ public abstract class Value implements Serializable {
 	}
 
 	public abstract boolean equalValue(Value value);
+
+	public abstract Object getValue();
 
 	@Override
 	public int hashCode() {

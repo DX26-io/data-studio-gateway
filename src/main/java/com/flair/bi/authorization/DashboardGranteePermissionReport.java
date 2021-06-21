@@ -1,7 +1,6 @@
 package com.flair.bi.authorization;
 
-import com.flair.bi.domain.User;
-import com.flair.bi.domain.View;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +17,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DashboardGranteePermissionReport<T extends PermissionGrantee> {
 
     private T grantee;

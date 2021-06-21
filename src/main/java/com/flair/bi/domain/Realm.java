@@ -1,16 +1,20 @@
 package com.flair.bi.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Entity
 @Table(name = "realm")
 @Data
@@ -23,5 +27,8 @@ public class Realm {
 
     @Column(name = "name")
     private String name;
+
+    @OneToOne(mappedBy = "realm", cascade = CascadeType.ALL, orphanRemoval = true)
+    private RealmCreationToken realmCreationToken;
 
 }

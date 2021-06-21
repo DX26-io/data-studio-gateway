@@ -196,7 +196,7 @@ public class Datasource implements Serializable, SecuredEntity {
         granteePermissionReport.getInfo().put("id", this.id);
         granteePermissionReport.getInfo().put("permissionMetadata", this.getPermissions()
                 .stream()
-                .map(y -> new PermissionReport(y, grantee.getAvailablePermissions().contains(y)))
+                .map(y -> new PermissionReport(y, grantee.getAvailablePermissions().contains(y), null))
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
 
         return granteePermissionReport;

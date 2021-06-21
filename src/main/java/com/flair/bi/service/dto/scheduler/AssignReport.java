@@ -1,78 +1,78 @@
 package com.flair.bi.service.dto.scheduler;
 
 public class AssignReport {
-	private String channel[];
-	private String slack_API_Token;
-	private String channel_id;
-	private String stride_API_Token;
-	private String stride_cloud_id;
-	private String stride_conversation_id;
-	private CommunicationList communication_list;
+	private String channels[];
+	private String slackAPIToken;
+	private String channelId;
+	private String strideAPIToken;
+	private String strideCloudId;
+	private String strideConversationId;
+	private CommunicationList communicationList;
 
 	public AssignReport() {
 	}
 
-	public String[] getChannel() {
-		return channel;
+	public String[] getChannels() {
+		return channels;
 	}
 
-	public void setChannel(String[] channel) {
-		this.channel = channel;
+	public void setChannels(String[] channels) {
+		this.channels = channels;
 	}
 
-	public String getSlack_API_Token() {
-		return slack_API_Token;
+	public String getSlackAPIToken() {
+		return slackAPIToken;
 	}
 
-	public void setSlack_API_Token(String slack_API_Token) {
-		this.slack_API_Token = slack_API_Token;
+	public void setSlackAPIToken(String slackAPIToken) {
+		this.slackAPIToken = slackAPIToken;
 	}
 
-	public String getChannel_id() {
-		return channel_id;
+	public String getChannelId() {
+		return channelId;
 	}
 
-	public void setChannel_id(String channel_id) {
-		this.channel_id = channel_id;
+	public void setChannelId(String channelId) {
+		this.channelId = channelId;
 	}
 
-	public String getStride_API_Token() {
-		return stride_API_Token;
+	public String getStrideAPIToken() {
+		return strideAPIToken;
 	}
 
-	public void setStride_API_Token(String stride_API_Token) {
-		this.stride_API_Token = stride_API_Token;
+	public void setStrideAPIToken(String strideAPIToken) {
+		this.strideAPIToken = strideAPIToken;
 	}
 
-	public String getStride_cloud_id() {
-		return stride_cloud_id;
+	public String getStrideCloudId() {
+		return strideCloudId;
 	}
 
-	public void setStride_cloud_id(String stride_cloud_id) {
-		this.stride_cloud_id = stride_cloud_id;
+	public void setStrideCloudId(String strideCloudId) {
+		this.strideCloudId = strideCloudId;
 	}
 
-	public String getStride_conversation_id() {
-		return stride_conversation_id;
+	public String getStrideConversationId() {
+		return strideConversationId;
 	}
 
-	public void setStride_conversation_id(String stride_conversation_id) {
-		this.stride_conversation_id = stride_conversation_id;
+	public void setStrideConversationId(String strideConversationId) {
+		this.strideConversationId = strideConversationId;
 	}
 
-	public CommunicationList getCommunication_list() {
-		return communication_list;
+	public CommunicationList getCommunicationList() {
+		return communicationList;
 	}
 
-	public void setCommunication_list(CommunicationList communication_list) {
-		this.communication_list = communication_list;
+	public void setCommunicationList(CommunicationList communicationList) {
+		this.communicationList = communicationList;
 	}
 
 	@Override
 	public String toString() {
-		return "AssignReport [channel=" + channel + ", slack_API_Token=" + slack_API_Token + ", channel_id="
-				+ channel_id + ", stride_API_Token=" + stride_API_Token + ", stride_cloud_id=" + stride_cloud_id
-				+ ", stride_conversation_id=" + stride_conversation_id + ", communication_list=" + communication_list
+		return "AssignReport [channel=" + channels + ", slack_API_Token=" + slackAPIToken + ", channel_id="
+				+ channelId + ", stride_API_Token=" + strideAPIToken + ", stride_cloud_id=" + strideCloudId
+				+ ", stride_conversation_id=" + strideConversationId + ", communication_list=" + communicationList
 				+ "]";
 	}
 

@@ -1,6 +1,5 @@
 package com.flair.bi.service;
 
-import com.flair.bi.domain.User;
 import com.flair.bi.messages.Connection;
 import com.flair.bi.messages.ConnectionType;
 import com.flair.bi.messages.ConnectionTypesResponses;
@@ -11,6 +10,7 @@ import com.flair.bi.messages.ListTablesResponse;
 import com.flair.bi.messages.SaveConnectionResponse;
 import com.flair.bi.messages.TestConnectionResponse;
 import com.flair.bi.messages.UpdateConnectionResponse;
+import com.flair.bi.security.SecurityUtils;
 import com.flair.bi.service.dto.ConnectionFilterParamsDTO;
 import com.flair.bi.service.dto.ListTablesResponseDTO;
 import com.flair.bi.service.dto.TestConnectionResultDTO;
@@ -43,6 +43,7 @@ public class GrpcConnectionService {
     private ConnectionTypeDTO toDto(ConnectionType conn) {
         return new ConnectionTypeDTO().setId(conn.getId()).setName(conn.getName()).setBundleClass(conn.getBundleClass())
                 .setConnectionPropertiesSchema(new ConnectionPropertiesSchemaDTO()
+                        .setConfig(conn.getConnectionPropertiesSchema().getConfigMap())
                         .setConnectionDetailsClass(conn.getConnectionPropertiesSchema().getConnectionDetailsClass())
                         .setConnectionDetailsType(conn.getConnectionPropertiesSchema().getConnectionDetailsType())
                         .setImagePath(conn.getConnectionPropertiesSchema().getImagePath()).setConnectionProperties(
@@ -55,11 +56,10 @@ public class GrpcConnectionService {
     }
 
     public List<ConnectionDTO> getAllConnections(ConnectionFilterParamsDTO filterParams) {
-        User user = userService.getUserWithAuthoritiesByLoginOrError();
         log.info("getAllConnections for realm {} link {} conn type {}",
-                user.getRealm().getId(), filterParams.getLinkId(), filterParams.getConnectionType());
+                SecurityUtils.getUserAuth().getRealmId(), filterParams.getLinkId(), filterParams.getConnectionType());
         GetAllConnectionsResponse connections = grpcService.getAllConnections(
-                user.getRealm().getId(), filterParams.getLinkId(), filterParams.getConnectionType());
+                SecurityUtils.getUserAuth().getRealmId(), filterParams.getLinkId(), filterParams.getConnectionType());
         return connections.getConnectionList()
                 .stream()
                 .map(conn -> toDto(conn)).collect(Collectors.toList());

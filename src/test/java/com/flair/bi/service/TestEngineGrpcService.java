@@ -15,12 +15,10 @@ import com.flair.bi.messages.SaveConnectionResponse;
 import com.flair.bi.messages.TestConnectionResponse;
 import com.flair.bi.messages.UpdateConnectionResponse;
 import io.grpc.stub.StreamObserver;
-import org.junit.Ignore;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
-@Ignore
 @Service
 public class TestEngineGrpcService implements IEngineGrpcService {
 
@@ -33,6 +31,11 @@ public class TestEngineGrpcService implements IEngineGrpcService {
 	}
 
 	public StreamObserver<Query> getDataStream(StreamObserver<QueryResponse> responseObserver) {
+		return null;
+	}
+
+	@Override
+	public QueryResponse getData(Query query) {
 		return null;
 	}
 

@@ -2,6 +2,7 @@ package com.flair.bi.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flair.bi.config.Constants;
+import com.flair.bi.config.jackson.JacksonUtil;
 import com.flair.bi.domain.Datasource;
 import com.flair.bi.domain.DatasourceConstraint;
 import com.flair.bi.domain.visualmetadata.VisualMetadata;
@@ -12,7 +13,6 @@ import com.flair.bi.messages.QueryResponse;
 import com.flair.bi.messages.QueryValidationResponse;
 import com.flair.bi.messages.RunQueryResponse;
 import com.flair.bi.service.dto.RunQueryResponseDTO;
-import com.flair.bi.service.dto.scheduler.SchedulerNotificationDTO;
 import com.flair.bi.view.ViewService;
 import com.flair.bi.web.rest.dto.QueryAllRequestDTO;
 import com.flair.bi.web.rest.dto.QueryValidationResponseDTO;
@@ -24,7 +24,6 @@ import com.project.bi.query.dto.QueryDTO;
 import com.project.bi.query.expression.condition.ConditionExpression;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
-import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +47,7 @@ public class GrpcQueryService {
     private final FbEngineWebSocketService fbEngineWebSocketService;
     private final IEngineGrpcService grpcService;
     private final QueryTransformerService queryTransformerService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JacksonUtil.OBJECT_MAPPER;
     private final ViewService viewService;
     private final UserService userService;
 
@@ -138,6 +137,42 @@ public class GrpcQueryService {
                 .orElseThrow(() -> new EntityNotFoundException("Datasource with id " + datasourceId + " not found"));
     }
 
+    public QueryResponse getDataStream(SendGetDataDTO sendGetDataDTO)  {
+        Datasource datasource = getDatasource(sendGetDataDTO.getDatasourcesId());
+
+        DatasourceConstraint constraint = datasourceConstraintService.findByUserAndDatasource(sendGetDataDTO.getUserId(),
+                datasource.getId());
+
+        QueryDTO queryDTO = sendGetDataDTO.getQueryDTO();
+
+        Optional.ofNullable(sendGetDataDTO.getVisualMetadata()).map(VisualMetadata::getConditionExpression).map(x -> {
+            ConditionExpressionDTO dto = new ConditionExpressionDTO();
+            dto.setSourceType(ConditionExpressionDTO.SourceType.BASE);
+            dto.setConditionExpression(x);
+            return dto;
+        }).ifPresent(queryDTO.getConditionExpressions()::add);
+
+        Optional.ofNullable(constraint).map(DatasourceConstraint::build)
+                .ifPresent(queryDTO.getConditionExpressions()::add);
+
+        QueryResponse resp;
+        try {
+            String type = sendGetDataDTO.getType();
+            if (sendGetDataDTO.getVisualMetadata() != null && type == null) {
+                resp = callGrpcBiDirectionalAndPushInSocket(datasource, sendGetDataDTO.getVisualMetadata().getId(), sendGetDataDTO);
+            } else if (sendGetDataDTO.getVisualMetadata() != null && type.equals(Constants.SHARED_LINK)) {
+                resp = callGrpcBiDirectionalAndPushInSocket(datasource, sendGetDataDTO.getVisualMetadata().getId(), sendGetDataDTO);
+            } else if (sendGetDataDTO.getVisualMetadata() == null && type.equals(Constants.SHARED_LINK_FILTER)) {
+                resp = callGrpcBiDirectionalAndPushInSocket(datasource, sendGetDataDTO.getVisualMetadataId(), sendGetDataDTO);
+            } else {
+                resp = callGrpcBiDirectionalAndPushInSocket(datasource, sendGetDataDTO.getVisualMetadataId(), sendGetDataDTO);
+            }
+        } catch (QueryTransformerException e) {
+            throw new RuntimeException(e);
+        }
+        return resp;
+    }
+
     public void sendGetDataStream(SendGetDataDTO sendGetDataDTO) throws InterruptedException {
         Datasource datasource = getDatasource(sendGetDataDTO.getDatasourcesId());
 
@@ -156,14 +191,29 @@ public class GrpcQueryService {
         Optional.ofNullable(constraint).map(DatasourceConstraint::build)
                 .ifPresent(queryDTO.getConditionExpressions()::add);
 
-        if (sendGetDataDTO.getVisualMetadata() != null && sendGetDataDTO.getType() == null) {
-            callGrpcBiDirectionalAndPushInSocket(datasource, sendGetDataDTO.getVisualMetadata().getId(), "vizualization", sendGetDataDTO);
-        } else if (sendGetDataDTO.getVisualMetadata() != null && sendGetDataDTO.getType().equals(Constants.SHARED_LINK)) {
-            callGrpcBiDirectionalAndPushInSocket(datasource, sendGetDataDTO.getVisualMetadata().getId(), sendGetDataDTO.getType(), sendGetDataDTO);
-        } else if (sendGetDataDTO.getVisualMetadata() == null && sendGetDataDTO.getType().equals(Constants.SHARED_LINK_FILTER)) {
-            callGrpcBiDirectionalAndPushInSocket(datasource, sendGetDataDTO.getVisualMetadataId(), sendGetDataDTO.getType(), sendGetDataDTO);
-        } else {
-            callGrpcBiDirectionalAndPushInSocket(datasource, sendGetDataDTO.getVisualMetadataId(), "filters", sendGetDataDTO);
+        try {
+            String type = sendGetDataDTO.getType();
+            QueryResponse resp;
+            if (sendGetDataDTO.getVisualMetadata() != null && type == null) {
+                type = "vizualization";
+                resp = callGrpcBiDirectionalAndPushInSocket(datasource, sendGetDataDTO.getVisualMetadata().getId(), sendGetDataDTO);
+            } else if (sendGetDataDTO.getVisualMetadata() != null && type.equals(Constants.SHARED_LINK)) {
+                resp = callGrpcBiDirectionalAndPushInSocket(datasource, sendGetDataDTO.getVisualMetadata().getId(), sendGetDataDTO);
+            } else if (sendGetDataDTO.getVisualMetadata() == null && type.equals(Constants.SHARED_LINK_FILTER)) {
+                resp = callGrpcBiDirectionalAndPushInSocket(datasource, sendGetDataDTO.getVisualMetadataId(), sendGetDataDTO);
+            } else {
+                type = "filters";
+                resp = callGrpcBiDirectionalAndPushInSocket(datasource, sendGetDataDTO.getVisualMetadataId(), sendGetDataDTO);
+            }
+            fbEngineWebSocketService.pushGRPCMetaDeta(resp, type);
+        } catch (StatusRuntimeException e) {
+            log.error("callGrpcBiDirectionalAndPushInSocket Failed:", e);
+            fbEngineWebSocketService.pushGRPCMetaDataError(sendGetDataDTO.getUserId(), e.getStatus());
+        } catch (QueryTransformerException e) {
+            fbEngineWebSocketService.pushGRPCMetaDataError(sendGetDataDTO.getUserId(), Status.FAILED_PRECONDITION,
+                    ImmutableMap.of("group", e.getValidationResult().getGroup().name().toLowerCase(),
+                            "error", e.getValidationResult().getErrors().get(0).getError(),
+                            "value", e.getValidationResult().getErrors().get(0).getValue()));
         }
     }
 
@@ -198,9 +248,8 @@ public class GrpcQueryService {
 
     }
 
-    private void callGrpcBiDirectionalAndPushInSocket(Datasource datasource, String vId,
-                                                      String request,
-                                                      SendGetDataDTO sendGetDataDTO) throws InterruptedException {
+    private QueryResponse callGrpcBiDirectionalAndPushInSocket(Datasource datasource, String vId,
+                                                               SendGetDataDTO sendGetDataDTO) throws QueryTransformerException {
         QueryDTO queryDTO = sendGetDataDTO.getQueryDTO();
         String userId = sendGetDataDTO.getUserId();
         Long dashboardId = Optional.ofNullable(sendGetDataDTO.getViewId())
@@ -223,83 +272,16 @@ public class GrpcQueryService {
                             .build());
         } catch (QueryTransformerException e) {
             log.error("Error validating a query " + queryDTO + " error " + e.getValidationMessage());
-            fbEngineWebSocketService.pushGRPCMetaDataError(userId, Status.FAILED_PRECONDITION,
-                    ImmutableMap.of("group", e.getValidationResult().getGroup().name().toLowerCase(),
-                            "error", e.getValidationResult().getErrors().get(0).getError(),
-                            "value", e.getValidationResult().getErrors().get(0).getValue()));
-            return;
-        }
-
-        StreamObserver<QueryResponse> responseObserver = new StreamObserver<QueryResponse>() {
-            @Override
-            public void onNext(QueryResponse queryResponse) {
-                log.debug("Finished trip with===" + queryResponse.toString());
-                fbEngineWebSocketService.pushGRPCMetaDeta(queryResponse, request);
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                log.error("callGrpcBiDirectionalAndPushInSocket Failed:", t);
-                if (t instanceof StatusRuntimeException) {
-                    StatusRuntimeException statusRuntimeException = (StatusRuntimeException) t;
-                    fbEngineWebSocketService.pushGRPCMetaDataError(userId, statusRuntimeException.getStatus());
-                }
-            }
-
-            @Override
-            public void onCompleted() {
-                log.debug("Finished Request");
-            }
-        };
-
-        StreamObserver<Query> requestObserver = grpcService.getDataStream(responseObserver);
-        try {
-            requestObserver.onNext(query);
-        } catch (RuntimeException e) {
-            // Cancel RPC
-            requestObserver.onError(e);
             throw e;
         }
-        // Mark the end of requests
-        requestObserver.onCompleted();
 
+        QueryResponse queryResponse = grpcService.getData(query);
+        log.debug("Finished trip with===" + queryResponse.toString());
+        return queryResponse;
     }
 
-    public void callGrpcBiDirectionalAndPushInSocket(SchedulerNotificationDTO schedulerNotificationResponseDTO,
-            Query query, String request, String userId) throws InterruptedException {
-        StreamObserver<QueryResponse> responseObserver = new StreamObserver<QueryResponse>() {
-            @Override
-            public void onNext(QueryResponse queryResponse) {
-                log.debug("Finished trip with===" + queryResponse.toString());
-                fbEngineWebSocketService.pushGRPCMetaDeta(schedulerNotificationResponseDTO, queryResponse, request);
-            }
-
-            @Override
-            public void onError(Throwable t) {
-                log.error("callGrpcBiDirectionalAndPushInSocket Failed:", t);
-                if (t instanceof StatusRuntimeException) {
-                    StatusRuntimeException statusRuntimeException = (StatusRuntimeException) t;
-                    fbEngineWebSocketService.pushGRPCMetaDataError(userId, statusRuntimeException.getStatus());
-                }
-            }
-
-            @Override
-            public void onCompleted() {
-                log.debug("Finished Request");
-            }
-        };
-
-        StreamObserver<Query> requestObserver = grpcService.getDataStream(responseObserver);
-        try {
-            requestObserver.onNext(query);
-        } catch (RuntimeException e) {
-            // Cancel RPC
-            requestObserver.onError(e);
-            throw e;
-        }
-        // Mark the end of requests
-        requestObserver.onCompleted();
-
+    public QueryResponse callGrpcBiDirectionalAndPushInSocket(Query query) throws InterruptedException {
+        return grpcService.getData(query);
     }
 
 }

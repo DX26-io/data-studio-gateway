@@ -1,5 +1,7 @@
 package com.flair.bi.websocket.grpc.config;
 
+import com.flair.bi.security.jwt.TokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -10,10 +12,6 @@ import org.springframework.web.socket.config.annotation.AbstractWebSocketMessage
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
-
-import com.flair.bi.security.jwt.TokenProvider;
-
-import lombok.RequiredArgsConstructor;
 
 /**
  * Enable and configure Stomp over WebSocket.

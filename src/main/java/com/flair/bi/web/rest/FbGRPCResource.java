@@ -1,6 +1,7 @@
 package com.flair.bi.web.rest;
 
 import com.flair.bi.messages.Query;
+import com.flair.bi.messages.QueryResponse;
 import com.flair.bi.security.SecurityUtils;
 import com.flair.bi.service.GrpcQueryService;
 import com.flair.bi.service.SchedulerService;
@@ -9,8 +10,10 @@ import com.flair.bi.service.dto.FbiEngineDTO;
 import com.flair.bi.service.dto.scheduler.SchedulerNotificationDTO;
 import com.flair.bi.service.dto.scheduler.SchedulerReportsDTO;
 import com.flair.bi.web.rest.dto.QueryAllRequestDTO;
+import com.flair.bi.web.websocket.FbEngineWebSocketService;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
+import io.grpc.StatusRuntimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,6 +42,8 @@ public class FbGRPCResource {
 	private final GrpcQueryService grpcQueryService;
 
 	private final SchedulerService schedulerService;
+
+	private final FbEngineWebSocketService fbEngineWebSocketService;
 
 	@PreAuthorize("@accessControlManager.hasAccess(#viewId, 'READ', 'VIEW')")
     @MessageMapping("/fbi-engine-grpc/{datasourcesId}/query/{viewId}")
@@ -103,8 +108,14 @@ public class FbGRPCResource {
 		Query.Builder builder = Query.newBuilder();
 		JsonFormat.parser().merge(schedulerNotificationResponseDTO.getQuery(), builder);
 		Query query = builder.build();
-		grpcQueryService.callGrpcBiDirectionalAndPushInSocket(schedulerNotificationResponseDTO, query,
-				"scheduled-report", query.getUserId());
+		try {
+			QueryResponse queryResponse = grpcQueryService.callGrpcBiDirectionalAndPushInSocket(query);
+			log.debug("Finished trip with===" + queryResponse.toString());
+			fbEngineWebSocketService.pushGRPCMetaDeta(schedulerNotificationResponseDTO, queryResponse, "scheduled-report");
+		} catch (StatusRuntimeException e) {
+			log.error("callGrpcBiDirectionalAndPushInSocket Failed:", e);
+			fbEngineWebSocketService.pushGRPCMetaDataError(query.getUserId(), e.getStatus());
+		}
 	}
 
 }

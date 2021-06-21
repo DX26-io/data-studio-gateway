@@ -1,13 +1,10 @@
 package com.flair.bi.web.rest.vm;
 
-import java.time.ZonedDateTime;
-import java.util.Set;
-
-import javax.validation.constraints.Size;
-
 import com.flair.bi.domain.User;
 import com.flair.bi.service.dto.UserDTO;
-import com.flair.bi.web.rest.dto.RealmDTO;
+
+import javax.validation.constraints.Size;
+import java.time.ZonedDateTime;
 
 /**
  * View Model extending the UserDTO, which is meant to be used in the user
@@ -42,18 +39,6 @@ public class ManagedUserVM extends UserDTO {
 		this.lastModifiedBy = user.getLastModifiedBy();
 		this.lastModifiedDate = user.getLastModifiedDate();
 		this.password = null;
-	}
-
-	public ManagedUserVM(Long id, String login, String password, String firstName, String lastName, String email,
-						 boolean activated, String langKey, Set<String> authorities, Set<String> userGroups, String createdBy,
-						 ZonedDateTime createdDate, String lastModifiedBy, ZonedDateTime lastModifiedDate, RealmDTO realmDTO) {
-		super(login, firstName, lastName, email, activated, langKey, null, authorities, userGroups,realmDTO);
-		this.id = id;
-		this.createdBy = createdBy;
-		this.createdDate = createdDate;
-		this.lastModifiedBy = lastModifiedBy;
-		this.lastModifiedDate = lastModifiedDate;
-		this.password = password;
 	}
 
 	public Long getId() {

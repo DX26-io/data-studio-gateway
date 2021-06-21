@@ -6,13 +6,18 @@ import com.flair.bi.domain.User;
 import com.flair.bi.repository.PersistentTokenRepository;
 import com.flair.bi.security.AuthoritiesConstants;
 import com.flair.bi.security.SecurityUtils;
+import com.flair.bi.security.jwt.JWTConfigurer;
 import com.flair.bi.service.MailService;
+import com.flair.bi.service.ProviderRegistrationService;
 import com.flair.bi.service.UserService;
 import com.flair.bi.service.dto.UserDTO;
 import com.flair.bi.web.rest.util.HeaderUtil;
 import com.flair.bi.web.rest.vm.KeyAndPasswordVM;
 import com.flair.bi.web.rest.vm.ManagedUserVM;
+import com.flair.bi.web.rest.vm.RealmInfo;
 import io.micrometer.core.annotation.Timed;
+import lombok.Builder;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -30,12 +35,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing the current user's account.
@@ -47,6 +56,8 @@ import java.util.Optional;
 public class AccountResource {
 
 	private final UserService userService;
+
+	private final ProviderRegistrationService providerRegistrationService;
 
 	private final PersistentTokenRepository persistentTokenRepository;
 
@@ -80,6 +91,41 @@ public class AccountResource {
 							mailService.sendActivationEmail(user);
 							return new ResponseEntity<>(HttpStatus.CREATED);
 						}));
+	}
+
+	@PostMapping(path = "/registerWithProvider")
+	@Timed
+	public ResponseEntity<RegisterWithProviderResponse> registerWithProvider(@Valid @RequestBody RegisterWithProviderRequest request,
+												  HttpServletResponse response) {
+		ProviderRegistrationService.RegisterResult result = providerRegistrationService.register(request.getIdToken(), request.getRealmId());
+		if (result.getJwt() != null) {
+			response.addHeader(JWTConfigurer.AUTHORIZATION_HEADER, "Bearer " + result.getJwt());
+		}
+		return ResponseEntity.ok(RegisterWithProviderResponse.builder()
+				.token(
+						result.getEmailConfirmationToken()
+				)
+				.realms(
+						Optional.ofNullable(result.getRealms())
+								.map(realms -> realms.stream().map(r -> new RealmInfo(r.getName(), r.getId())).collect(Collectors.toList()))
+								.orElse(null)
+				)
+				.build());
+	}
+
+	@Data
+	private static class RegisterWithProviderRequest {
+		@NotEmpty
+		private String idToken;
+		@Nullable
+		private Long realmId;
+	}
+
+	@Data
+	@Builder
+	private static class RegisterWithProviderResponse {
+		private final String token;
+		private final List<RealmInfo> realms;
 	}
 
 	/**
@@ -123,7 +169,11 @@ public class AccountResource {
 	public ResponseEntity<UserDTO> getAccount() {
 		User userWithAuthorities = userService.getUserWithAuthorities();
 		return Optional.ofNullable(userWithAuthorities)
-				.map(user -> new ResponseEntity<>(new UserDTO(user), HttpStatus.OK))
+				.map(user -> {
+					UserDTO userDTO = new UserDTO(user);
+					userDTO.initCurrentRealm(SecurityUtils.getUserAuth().getRealmId());
+					return new ResponseEntity<>(userDTO, HttpStatus.OK);
+				})
 				.orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 	}
 
