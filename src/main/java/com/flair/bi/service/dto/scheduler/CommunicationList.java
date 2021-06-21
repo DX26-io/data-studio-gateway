@@ -3,18 +3,18 @@ package com.flair.bi.service.dto.scheduler;
 import java.util.Arrays;
 
 public class CommunicationList {
-	emailsDTO email[];
+	emailsDTO emails[];
 	Integer teams[];
 
 	public CommunicationList() {
 	}
 
-	public emailsDTO[] getEmail() {
-		return email;
+	public emailsDTO[] getEmails() {
+		return emails;
 	}
 
-	public void setEmail(emailsDTO[] email) {
-		this.email = email;
+	public void setEmails(emailsDTO[] emails) {
+		this.emails = emails;
 	}
 
 	public Integer[] getTeams() {
@@ -27,7 +27,7 @@ public class CommunicationList {
 
 	@Override
 	public String toString() {
-		return "CommunicationList [email=" + Arrays.toString(email) + ", teams=" + Arrays.toString(teams) + "]";
+		return "CommunicationList [emails=" + Arrays.toString(emails) + ", teams=" + Arrays.toString(teams) + "]";
 	}
 
 }
