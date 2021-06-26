@@ -63,7 +63,7 @@ public class FunctionsServiceImpl implements FunctionsService {
 	 * 
 	 * @return the list of entities
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<FunctionsDTO> findAll() {
 		log.debug("Request to get all Functions");
 		List<FunctionsDTO> result = ImmutableList.copyOf(functionsRepository.findAll(hasUserRealmAccess()))
@@ -80,7 +80,7 @@ public class FunctionsServiceImpl implements FunctionsService {
 	 * @param id the id of the entity
 	 * @return the entity
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public FunctionsDTO findOne(Long id) {
 		log.debug("Request to get Functions : {}", id);
 		Functions functions = findById(id);
@@ -113,7 +113,7 @@ public class FunctionsServiceImpl implements FunctionsService {
 		functionsRepository.deleteAllByRealmId(realmId);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	@Override
 	public List<Functions> findByRealmId(Long realmId) {
 		if (!Objects.equals(realmId, SecurityUtils.getUserAuth().getRealmId())) {
@@ -123,7 +123,7 @@ public class FunctionsServiceImpl implements FunctionsService {
 	}
 
 	@PreAuthorize("@accessControlManager.hasAccess('REALM-MANAGEMENT', 'READ', 'APPLICATION')")
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<Functions> findByRealmIdAsRealmManager(Long realmId) {
 		return functionsRepository.findByRealmId(realmId);
 	}

@@ -22,13 +22,13 @@ public class PropertyTypeServiceImpl implements PropertyTypeService {
 	private final PropertyTypeRepository propertyTypeRepository;
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public Page<PropertyType> findAll(Pageable pageable) {
 		return propertyTypeRepository.findAll(pageable);
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public PropertyType findById(Long id) {
 		final PropertyType propertyType = propertyTypeRepository.getOne(id);
 

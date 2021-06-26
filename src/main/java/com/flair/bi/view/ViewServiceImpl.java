@@ -161,7 +161,7 @@ class ViewServiceImpl implements ViewService {
 	 * @return the list of entities
 	 */
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<View> findAll() {
 		log.debug("Request to get all View");
 		return ImmutableList.copyOf(
@@ -170,7 +170,7 @@ class ViewServiceImpl implements ViewService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<View> findAllByPrincipalPermissions(Predicate predicate) {
 		log.debug("Request to get all View");
 		return ImmutableList.copyOf(
@@ -179,7 +179,7 @@ class ViewServiceImpl implements ViewService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public Page<View> findAllByPrincipalPermissions(Predicate predicate, Pageable pageable) {
 		log.debug("Request to get paginated View");
 		return viewRepository.findAll(userHasPermission().and(predicate).and(hasUserRealmAccess()), pageable);
@@ -196,13 +196,13 @@ class ViewServiceImpl implements ViewService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public Long countByPrincipalPermissions() {
 		return viewRepository.count(userHasPermission().and(hasUserRealmAccess()));
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<View> recentlyCreated() {
 		final BooleanExpression createdBy = QView.view.createdBy.eq(SecurityUtils.getCurrentUserLogin());
 		final Sort sort = Sort.by(Sort.Direction.DESC, "createdDate");
@@ -212,7 +212,7 @@ class ViewServiceImpl implements ViewService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<View> mostPopular() {
 		final Sort sort = Sort.by(Sort.Direction.DESC, "watchCount");
 		final PageRequest pageRequest = PageRequest.of(0, 5, sort);
@@ -272,7 +272,7 @@ class ViewServiceImpl implements ViewService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public Page<View> findByDashboardId(Long dashboardId,Pageable pageable) {
 		final Sort sort = Sort.by(Sort.Direction.ASC, "viewName");
 		final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
@@ -280,7 +280,7 @@ class ViewServiceImpl implements ViewService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<View> findByDashboardId(Long dashboardId) {
 		return ImmutableList.copyOf(
 				viewRepository.findAll(hasUserRealmAccess().and(QView.view.viewDashboard.id.eq(dashboardId)))
@@ -485,7 +485,7 @@ class ViewServiceImpl implements ViewService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public ViewExportDTO exportView(Long id) {
 		return Optional.ofNullable(findById(id)).map(view -> {
 			view.setCurrentEditingState(viewStateCouchDbRepository.get(view.getCurrentEditingState().getId()));
@@ -493,7 +493,7 @@ class ViewServiceImpl implements ViewService {
 		}).orElse(null);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	@Override
 	public Optional<View> findViewCurrentEditingStateId(String viewStateId) {
 		return viewRepository.findOne(QView.view.currentEditingState.id.eq(viewStateId).and(hasUserRealmAccess()));

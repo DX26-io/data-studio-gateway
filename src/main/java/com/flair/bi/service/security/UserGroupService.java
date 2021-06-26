@@ -42,7 +42,7 @@ public class UserGroupService {
 
 	private final UserService userService;
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<UserGroup> findAll() {
 		log.debug("Request to get all UserGroups for realm {}", SecurityUtils.getUserAuth().getRealmId());
 		return ImmutableList.copyOf(
@@ -50,12 +50,12 @@ public class UserGroupService {
 		);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<UserGroup> findAllByNameInAndRealmId(Set<String> groupNames, Long realmId) {
 		return userGroupRepository.findAllByNameInAndRealmId(groupNames, realmId);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<UserGroup> findAllByRealmId(Long realmId) {
 		return userGroupRepository.findAllByRealmId(realmId);
 	}
@@ -105,7 +105,7 @@ public class UserGroupService {
 	 * @param pageable the pagination information
 	 * @return the list of entities
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public Page<UserGroup> findAll(Pageable pageable) {
 		log.debug("Request to get all UserGroups");
 		return userGroupRepository.findAll(hasRoleRestrictions(), pageable);
@@ -131,7 +131,7 @@ public class UserGroupService {
 		return RestrictedResources.RESTRICTED_ROLES.contains(role);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public UserGroupPageInfo findAll(Predicate predicate, Pageable pageable) {
 		Page<UserGroup> page = userGroupRepository.findAll(hasRoleRestrictions().and(predicate), pageable);
 		List<UserGroupInfo> results = page
@@ -141,7 +141,7 @@ public class UserGroupService {
 		return new UserGroupPageInfo(results, page);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<UserGroup> findAll(Predicate predicate) {
 		log.debug("Request to get all UserGroups");
 		return ImmutableList.copyOf(
@@ -155,13 +155,13 @@ public class UserGroupService {
 	 * @param name the name of the entity
 	 * @return the entity
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public UserGroup findOne(String name) {
 		log.debug("Request to get UserGroup: {}", name);
 		return userGroupRepository.findByNameAndRealmId(name, SecurityUtils.getUserAuth().getRealmId());
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public boolean exists(String name) {
 		log.debug("Exists to get UserGroup: {}", name);
 		return userGroupRepository.existsByName(name);
@@ -197,7 +197,7 @@ public class UserGroupService {
 		return !isPredefinedGroup(name);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public boolean exists(UserGroup userGroup) {
 		return userGroupRepository.findByNameAndRealmId(userGroup.getName(), SecurityUtils.getUserAuth().getRealmId()) != null;
 	}

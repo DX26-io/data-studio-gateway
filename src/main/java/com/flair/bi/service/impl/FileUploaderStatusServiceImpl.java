@@ -63,7 +63,7 @@ public class FileUploaderStatusServiceImpl implements FileUploaderStatusService 
 	 * @param pageable the pagination information
 	 * @return the list of entities
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public Page<FileUploaderStatusDTO> findAll(Pageable pageable) {
 		log.debug("Request to get all FileUploaderStatuses");
 		Page<FileUploaderStatus> result = fileUploaderStatusRepository.findAll(hasRealmPermissions(), pageable);
@@ -77,7 +77,7 @@ public class FileUploaderStatusServiceImpl implements FileUploaderStatusService 
 	 * @param id the id of the entity
 	 * @return the entity
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public FileUploaderStatusDTO findOne(Long id) {
 		log.debug("Request to get FileUploaderStatus : {}", id);
 		FileUploaderStatus fileUploaderStatus = fileUploaderStatusRepository.findOne(hasRealmPermissions().and(QFileUploaderStatus.fileUploaderStatus.id.eq(id)))

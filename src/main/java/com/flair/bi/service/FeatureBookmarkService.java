@@ -65,7 +65,7 @@ public class FeatureBookmarkService {
 	 * @param predicate predicate
 	 * @return the list of entities
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<FeatureBookmark> findAll(Predicate predicate) {
 		log.debug("Request to get all FeatureBookmarks");
 		return (List<FeatureBookmark>) featureBookmarkRepository.findAll(new BooleanBuilder(predicate)
@@ -79,7 +79,7 @@ public class FeatureBookmarkService {
 	 * @param id the id of the entity
 	 * @return the entity
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public FeatureBookmark findOne(Long id) {
 		log.debug("Request to get FeatureBookmark : {}", id);
 		return featureBookmarkRepository.findOne(hasRealmPermissions().and(QFeatureBookmark.featureBookmark.id.eq(id))).orElseThrow();

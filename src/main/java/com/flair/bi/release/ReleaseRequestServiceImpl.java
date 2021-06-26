@@ -71,7 +71,7 @@ class ReleaseRequestServiceImpl implements ReleaseRequestService {
 	 *
 	 * @return collection of {@link ReleaseRequest}
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	@Override
 	public Collection<ReleaseRequest> getAllRequests() {
 

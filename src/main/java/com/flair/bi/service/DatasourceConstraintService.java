@@ -51,7 +51,7 @@ public class DatasourceConstraintService {
 	 * @param predicate predicate
 	 * @return the list of entities
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<DatasourceConstraint> findAll(Predicate predicate) {
 		log.debug("Request to get all DatasourceConstraints");
 		return ImmutableList.copyOf(
@@ -70,7 +70,7 @@ public class DatasourceConstraintService {
 	 * @param id the id of the entity
 	 * @return the entity
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public DatasourceConstraint findOne(Long id) {
 		log.debug("Request to get DatasourceConstraint : {}", id);
 		return datasourceConstraintRepository.findOne(hasRealmAccess().and(QDatasourceConstraint.datasourceConstraint.id.eq(id)))
@@ -88,7 +88,7 @@ public class DatasourceConstraintService {
 		datasourceConstraintRepository.delete(datasourceConstraint);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public DatasourceConstraint findByUserAndDatasource(String login, Long datasourceId) {
 		return datasourceConstraintRepository.findOne(hasRealmAccess()
 				.and(QDatasourceConstraint.datasourceConstraint.datasource.id.eq(datasourceId))

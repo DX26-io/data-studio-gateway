@@ -218,7 +218,7 @@ public class UserService {
 		});
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Optional<User> getUserWithAuthoritiesByLogin(String login) {
 		return userRepository.findOneByLoginAndRealmsId(login, SecurityUtils.getUserAuth().getRealmId()).map(user -> {
 			user.retrieveAllUserPermissions().size();
@@ -226,7 +226,7 @@ public class UserService {
 		});
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Optional<User> getUserByLogin(String login) {
 		Optional<User> usr = userRepository.findOneByLogin(login);
 		if (usr.isPresent()) {
@@ -236,7 +236,7 @@ public class UserService {
 		return usr;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Optional<User> getUserByLoginNoRealmCheck(String login) {
 		Optional<User> usr = userRepository.findOneByLogin(login);
 		usr.ifPresent(user -> user.retrieveAllUserPermissions().size());
@@ -251,7 +251,7 @@ public class UserService {
 		return user;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public User getUserWithAuthoritiesByLoginOrError() {
 		return userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).map(user -> {
 			user.retrieveAllUserPermissions().size();
@@ -259,7 +259,7 @@ public class UserService {
 		}).orElseThrow(RuntimeException::new);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public User getUserWithAuthorities(Long id) {
 		User user = userRepository.findOneByIdAndRealmsId(id, SecurityUtils.getUserAuth().getRealmId()).orElseThrow();
 		// eagerly load the association
@@ -267,7 +267,7 @@ public class UserService {
 		return user;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public User getUserWithAuthorities() {
 		Optional<User> optionalUser = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
 		User user = null;
@@ -279,21 +279,21 @@ public class UserService {
 		return user;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Page<User> findAllWithAuthorities(Pageable pageable) {
 		Page<User> users = userRepository.findAll(hasUserRealmAccess(), pageable);
 		users.getContent().forEach(x -> x.retrieveAllUserPermissions().size());
 		return users;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Page<User> findAllWithAuthorities(Pageable pageable, Predicate predicate) {
 		Page<User> users = userRepository.findAll(hasUserRealmAccess().and(predicate), pageable);
 		users.getContent().forEach(x -> x.retrieveAllUserPermissions().size());
 		return users;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<User> findAllWithAuthorities(Predicate predicate) {
 		Iterable<User> users = userRepository.findAll(hasUserRealmAccess().and(predicate));
 		users.forEach(x -> x.retrieveAllUserPermissions().size());
@@ -365,12 +365,12 @@ public class UserService {
 		userRepository.saveAll(users);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Optional<User> getUserByEmail(String email) {
 		return userRepository.findOneByEmailAndRealmsId(email, SecurityUtils.getUserAuth().getRealmId());
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Optional<User> getUserByEmailAnyRealm(String email) {
 		return userRepository.findOneByEmail(email);
 	}

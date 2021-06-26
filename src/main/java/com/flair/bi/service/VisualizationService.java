@@ -57,7 +57,7 @@ public class VisualizationService {
 	 *
 	 * @return the list of entities
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<VisualizationDTO> findAll() {
 		log.debug("Request to get all Visualization");
 		List<Visualization> all = visualizationRepository.findAll();
@@ -73,7 +73,7 @@ public class VisualizationService {
 	 * @param id the id of the entity
 	 * @return the entity
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public VisualizationDTO findOne(Long id) {
 		log.debug("Request to get Visualization : {}", id);
 		Optional<Visualization> visualization = visualizationRepository.findById(id);
@@ -111,13 +111,13 @@ public class VisualizationService {
 		visualizationRepository.deleteById(id);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Page<FieldType> getFieldTypes(Long visualizationId, Pageable pageable) {
 		log.debug("Request to get field types for visualizations: {}", visualizationId);
 		return fieldTypeService.findByVisualizationId(visualizationId, pageable);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public FieldType getFieldType(Long visualizationsId, Long fieldTypeId) {
 		log.debug("Request to get field type with visualizations id: {} and field type id: {}", visualizationsId,
 				fieldTypeId);
