@@ -2,31 +2,31 @@ package com.flair.bi.service.dto.scheduler;
 
 public class emailsDTO {
 
-	private String userEmail;
-	private String userName;
+	private String user_email;
+	private String user_name;
 
 	public emailsDTO() {
 	}
 
-	public String getUserEmail() {
-		return userEmail;
+	public String getUser_email() {
+		return user_email;
 	}
 
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
+	public void setUser_email(String user_email) {
+		this.user_email = user_email;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getUser_name() {
+		return user_name;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
 	}
 
 	@Override
 	public String toString() {
-		return "emailsDTO [userEmail=" + userEmail + ", userName=" + userName + "]";
+		return "emailsDTO [user_email=" + user_email + ", user_name=" + user_name + "]";
 	}
 
 }

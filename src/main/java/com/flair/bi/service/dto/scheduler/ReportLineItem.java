@@ -3,50 +3,50 @@ package com.flair.bi.service.dto.scheduler;
 import java.util.Arrays;
 
 public class ReportLineItem {
-	private String visualizationId;
-	private String visualizationType;
-	private String dimensions[];
-	private String measures[];
+	private String visualizationid;
+	private String visualization;
+	private String dimension[];
+	private String measure[];
 
 	public ReportLineItem() {
 	}
 
-	public String getVisualizationType() {
-		return visualizationType;
+	public String getVisualization() {
+		return visualization;
 	}
 
-	public void setVisualizationType(String visualizationType) {
-		this.visualizationType = visualizationType;
+	public void setVisualization(String visualization) {
+		this.visualization = visualization;
 	}
 
-	public String[] getDimensions() {
-		return dimensions;
+	public String[] getDimension() {
+		return dimension;
 	}
 
-	public void setDimensions(String[] dimensions) {
-		this.dimensions = dimensions;
+	public void setDimension(String[] dimension) {
+		this.dimension = dimension;
 	}
 
-	public String[] getMeasures() {
-		return measures;
+	public String[] getMeasure() {
+		return measure;
 	}
 
-	public void setMeasures(String[] measures) {
-		this.measures = measures;
+	public void setMeasure(String[] measure) {
+		this.measure = measure;
 	}
 
-	public String getVisualizationId() {
-		return visualizationId;
+	public String getVisualizationid() {
+		return visualizationid;
 	}
 
-	public void setVisualizationId(String visualizationId) {
-		this.visualizationId = visualizationId;
+	public void setVisualizationid(String visualizationid) {
+		this.visualizationid = visualizationid;
 	}
 
 	@Override
 	public String toString() {
-		return "ReportLineItem [visualizationId=" + visualizationId + ", visualization=" + visualizationType
-				+ ", dimensions=" + Arrays.toString(dimensions) + ", measures=" + Arrays.toString(measures) + "]";
+		return "ReportLineItem [visualizationid=" + visualizationid + ", visualization=" + visualization
+				+ ", dimension=" + Arrays.toString(dimension) + ", measure=" + Arrays.toString(measure) + "]";
 	}
 
 }
