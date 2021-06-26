@@ -58,27 +58,27 @@ public class RealmService {
         return new CreateRealmData(realm.getId(), realm.getName(), realm.getRealmCreationToken().getToken());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<RealmDTO> findAll(Pageable pageable) {
         log.debug("Request to get all realms");
         Page<Realm> entities = realmRepository.findAll(pageable);
         return realmMapper.toDTOs(entities.getContent());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Page<Realm> findAll(Predicate predicate, Pageable pageable) {
         log.debug("Request to get all realms");
         return realmRepository.findAll(predicate,pageable);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public RealmDTO findOne(Long id) {
         log.debug("Request to get Functions : {}", id);
         Realm entity = realmRepository.getOne(id);
         return realmMapper.toDTO(entity);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Realm findOneAsRealm(Long id) {
         log.debug("Request to get Functions : {}", id);
         return realmRepository.getOne(id);

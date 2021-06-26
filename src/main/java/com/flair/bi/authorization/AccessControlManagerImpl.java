@@ -57,7 +57,7 @@ class AccessControlManagerImpl implements AccessControlManager {
 	 * @param scope    permission scope
 	 * @return true if user has permission, false otherwise
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	@Override
 	public boolean hasAccess(String login, String resource, Action action, String scope) {
 		return hasAccess(login, new Permission(resource, action, scope));
@@ -70,7 +70,7 @@ class AccessControlManagerImpl implements AccessControlManager {
 	 * @param permission permission that we are checking against
 	 * @return true if user has permission, false otherwise
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	@Override
 	public boolean hasAccess(String login, Permission permission) {
 		log.debug("Checking access for {}", permission);
@@ -99,7 +99,7 @@ class AccessControlManagerImpl implements AccessControlManager {
 	 * @param permission permission that we are checking against
 	 * @return true if user has permission, false otherwise
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	@Override
 	public boolean hasAccess(Permission permission) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -482,7 +482,7 @@ class AccessControlManagerImpl implements AccessControlManager {
 	 * @param permission permission that searching starts from
 	 * @return collection of permissions connected together
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	@Override
 	public Collection<Permission> getPermissionChain(Permission permission) {
 		Set<Permission> permissions = new HashSet<>();

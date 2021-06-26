@@ -168,7 +168,7 @@ public class DashboardServiceImpl implements DashboardService {
 	 * @return the list of entities
 	 */
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<Dashboard> findAll() {
 		log.debug("Request to get all Dashboard");
 		return ImmutableList.copyOf(
@@ -186,7 +186,7 @@ public class DashboardServiceImpl implements DashboardService {
 	 * @return the list of entities
 	 */
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public Page<Dashboard> findAllByPrincipalPermissions(Pageable pageable, Predicate predicate) {
 		BooleanBuilder expression = new BooleanBuilder(userHasPermission())
 				.and(predicate)
@@ -195,7 +195,7 @@ public class DashboardServiceImpl implements DashboardService {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public Long countByPrincipalPermissions() {
 		return dashboardRepository.count(new BooleanBuilder(userHasPermission())
 				.and(hasUserRealmAccess()));
@@ -218,7 +218,7 @@ public class DashboardServiceImpl implements DashboardService {
 	 * @return the entity
 	 */
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public Dashboard findOne(Long id) {
 		log.debug("Request to get Dashboard : {}", id);
 		return findById(id)
@@ -427,7 +427,7 @@ public class DashboardServiceImpl implements DashboardService {
 		dashboardRepository.deleteAllByRealmId(realmId);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	@Override
 	public List<DashboardRelease> getDashboardReleasesList(Long dashboardId) {
 		return ImmutableList.copyOf(

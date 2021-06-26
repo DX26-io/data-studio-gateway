@@ -75,7 +75,7 @@ public class FeatureCriteriaService {
 	 * @param predicate predicate
 	 * @return the list of entities
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<FeatureCriteria> findAll(Predicate predicate) {
 		log.debug("Request to get all FeatureCriteria");
 
@@ -94,7 +94,7 @@ public class FeatureCriteriaService {
 	 * @param id the id of the entity
 	 * @return the entity
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public FeatureCriteria findOne(Long id) {
 		log.debug("Request to get FeatureCriteria : {}", id);
 		FeatureCriteria result = featureCriteriaRepository.getOne(id);

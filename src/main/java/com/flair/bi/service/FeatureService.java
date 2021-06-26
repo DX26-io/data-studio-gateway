@@ -29,7 +29,7 @@ public class FeatureService {
 	private final FunctionsService functionsService;
 	private final UserService userService;
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<Feature> getFeatures(Predicate predicate) {
 		log.debug("Attempt to retrieve features with predicate {}", predicate);
 		return ImmutableList.copyOf(
@@ -37,7 +37,7 @@ public class FeatureService {
 		);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Feature getOne(Long id) {
 		log.debug("Attempt to retrieve feature with id: {}", id);
 		return featureRepository.findOne(hasRealmPermissions().and(QFeature.feature.id.eq(id))).orElseThrow();

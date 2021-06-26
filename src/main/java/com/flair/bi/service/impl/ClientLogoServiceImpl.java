@@ -57,7 +57,7 @@ public class ClientLogoServiceImpl implements ClientLogoService{
      *  @return the list of entities
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ClientLogo> findAll() {
         log.debug("Request to get all ClientLogos");
         return ImmutableList.copyOf(
@@ -76,7 +76,7 @@ public class ClientLogoServiceImpl implements ClientLogoService{
      *  @return the entity
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public ClientLogo findOne(Long id) {
         log.debug("Request to get ClientLogo : {}", id);
         return clientLogoRepository.findOne(hasRealmPermissions()

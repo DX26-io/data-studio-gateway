@@ -1,16 +1,14 @@
 package com.flair.bi.service.security;
 
+import com.flair.bi.domain.security.Permission;
+import com.flair.bi.domain.security.PermissionKey;
+import com.flair.bi.repository.security.PermissionRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.flair.bi.domain.security.Permission;
-import com.flair.bi.domain.security.PermissionKey;
-import com.flair.bi.repository.security.PermissionRepository;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
@@ -37,7 +35,7 @@ public class PermissionService {
 	 * @param pageable the pagination information
 	 * @return the list of entities
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public Page<Permission> findAll(Pageable pageable) {
 		log.debug("Request to get all permissions");
 		return permissionRepository.findAll(pageable);
@@ -49,7 +47,7 @@ public class PermissionService {
 	 * @param id the id of the entity
 	 * @return the entity
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public Permission findOne(PermissionKey id) {
 		log.debug("Request to get Permission: {}", id);
 		return permissionRepository.getOne(id);

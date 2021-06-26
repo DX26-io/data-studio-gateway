@@ -42,7 +42,7 @@ public class DatasourceGroupConstraintService {
 		return datasourceGroupConstraintRepository.save(datasourceGroupConstraint);
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<DatasourceGroupConstraint> findAll(Predicate predicate) {
 		log.debug("Request to get all DatasourceGroupConstraint");
 		Predicate b = hasRealmPermissions().and(predicate);
@@ -53,7 +53,7 @@ public class DatasourceGroupConstraintService {
 		return QDatasourceGroupConstraint.datasourceGroupConstraint.userGroup.realm.id.eq(SecurityUtils.getUserAuth().getRealmId());
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<DatasourceGroupConstraint> findAllByUserGroupName(String userGroup) {
 		log.debug("Request to get all DatasourceGroupConstraint");
 		UserGroup ug = userGroupService.findOne(userGroup);
@@ -66,7 +66,7 @@ public class DatasourceGroupConstraintService {
 	 * @param id the id of the entity
 	 * @return the entity
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public DatasourceGroupConstraint findOne(Long id) {
 		log.debug("Request to get DatasourceGroupConstraint : {}", id);
 		BooleanExpression expression = hasRealmPermissions().and(QDatasourceGroupConstraint.datasourceGroupConstraint.id.eq(id));

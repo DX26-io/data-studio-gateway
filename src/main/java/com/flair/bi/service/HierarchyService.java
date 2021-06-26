@@ -22,12 +22,12 @@ public class HierarchyService {
 	private final HierarchyRepository hierarchyRepository;
 	private final UserService userService;
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<Hierarchy> findAll(Predicate predicate) {
 		return ImmutableList.copyOf(hierarchyRepository.findAll(hasRealmPermission().and(predicate)));
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public Hierarchy findOne(Long id) {
 		return hierarchyRepository.findOne(hasRealmPermission()
 				.and(QHierarchy.hierarchy.id.eq(id)))

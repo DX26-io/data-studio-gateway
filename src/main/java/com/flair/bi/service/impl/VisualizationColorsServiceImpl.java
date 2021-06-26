@@ -67,7 +67,7 @@ public class VisualizationColorsServiceImpl implements VisualizationColorsServic
 	 * 
 	 * @return the list of entities
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public List<VisualizationColorsDTO> findAll() {
 		log.debug("Request to get all VisualizationColors");
 		final Sort sort = Sort.by(Sort.Direction.ASC, "id");
@@ -85,7 +85,7 @@ public class VisualizationColorsServiceImpl implements VisualizationColorsServic
 	 * @param id the id of the entity
 	 * @return the entity
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public VisualizationColorsDTO findOne(Long id) {
 		log.debug("Request to get VisualizationColors : {}", id);
 		VisualizationColors visualizationColors = findById(id);
@@ -122,7 +122,7 @@ public class VisualizationColorsServiceImpl implements VisualizationColorsServic
 	}
 
 	@PreAuthorize("@accessControlManager.hasAccess('REALM-MANAGEMENT', 'READ', 'APPLICATION')")
-	@Transactional(readOnly = true)
+	@Transactional
 	@Override
 	public List<VisualizationColors> findByRealmId(Long realmId) {
 		return visualizationColorsRepository.findByRealmId(realmId);

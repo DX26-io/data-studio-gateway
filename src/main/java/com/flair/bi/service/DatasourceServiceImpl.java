@@ -76,7 +76,7 @@ public class DatasourceServiceImpl implements DatasourceService {
      * @return the list of entities
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Datasource> findAll(Predicate predicate) {
         log.debug("Request to get all Datasource");
         return ImmutableList.copyOf(
@@ -85,7 +85,7 @@ public class DatasourceServiceImpl implements DatasourceService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Page<Datasource> findAll(Pageable pageable) {
         log.debug("Request to get all Datasource");
         return datasourceRepository.findAll(
@@ -93,7 +93,7 @@ public class DatasourceServiceImpl implements DatasourceService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Page<Datasource> findAll(Predicate predicate, Pageable pageable) {
         log.debug("Request to get all Datasource");
         return datasourceRepository.findAll(
@@ -115,7 +115,7 @@ public class DatasourceServiceImpl implements DatasourceService {
      * @return the entity
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Datasource findOne(Long id) {
         log.debug("Request to get Datasource : {}", id);
         return datasourceRepository.findOne(
@@ -141,7 +141,7 @@ public class DatasourceServiceImpl implements DatasourceService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Long getCount(Predicate predicate) {
         log.debug("Request to get Datasource count with predicate {}", predicate);
         return datasourceRepository.count(
@@ -164,7 +164,7 @@ public class DatasourceServiceImpl implements DatasourceService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public Page<Datasource> search(Pageable pageable, Predicate predicate) {
         log.debug("Request to get Searched Datasource");
         return datasourceRepository.findAll(
@@ -172,7 +172,7 @@ public class DatasourceServiceImpl implements DatasourceService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<Datasource> findAllByConnectionAndName(String connectionName, String datasourceName) {
         return findAll(hasUserPermissions().and(QDatasource.datasource.connectionName.eq(connectionName)
                 .and(QDatasource.datasource.name.eq(datasourceName))
