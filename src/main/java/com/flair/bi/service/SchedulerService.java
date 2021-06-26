@@ -267,20 +267,20 @@ public class SchedulerService {
 		Optional<User> optionalUser = userService.getUserWithAuthoritiesByLogin(login);
 		return optionalUser.map(user -> {
 			emailsDTO emailsDTO = new emailsDTO();
-			emailsDTO.setUserEmail(user.getEmail());
-			emailsDTO.setUserName(user.getFirstName() + " " + user.getLastName());
+			emailsDTO.setUser_email(user.getEmail());
+			emailsDTO.setUser_name(user.getFirstName() + " " + user.getLastName());
 			return emailsDTO;
 		}).map(emails -> new emailsDTO[] { emails }).orElseGet(() -> new emailsDTO[] { new emailsDTO() });
 	}
 
 	public void setChannelCredentials(SchedulerNotificationDTO schedulerNotificationDTO) {
-		if (schedulerNotificationDTO.getAssignReport().getChannels().equals("slack")) {
-			schedulerNotificationDTO.getAssignReport().setChannelId(channel_id);
-			schedulerNotificationDTO.getAssignReport().setSlackAPIToken(slack_API_Token);
-		} else if (schedulerNotificationDTO.getAssignReport().getChannels().equals("stride")) {
-			schedulerNotificationDTO.getAssignReport().setStrideAPIToken(stride_API_Token);
-			schedulerNotificationDTO.getAssignReport().setStrideCloudId(stride_cloud_id);
-			schedulerNotificationDTO.getAssignReport().setStrideConversationId(stride_conversation_id);
+		if (schedulerNotificationDTO.getAssign_report().getChannel().equals("slack")) {
+			schedulerNotificationDTO.getAssign_report().setChannel_id(channel_id);
+			schedulerNotificationDTO.getAssign_report().setSlack_API_Token(slack_API_Token);
+		} else if (schedulerNotificationDTO.getAssign_report().getChannel().equals("stride")) {
+			schedulerNotificationDTO.getAssign_report().setStride_API_Token(stride_API_Token);
+			schedulerNotificationDTO.getAssign_report().setStride_cloud_id(stride_cloud_id);
+			schedulerNotificationDTO.getAssign_report().setStride_conversation_id(stride_conversation_id);
 		}
 	}
 

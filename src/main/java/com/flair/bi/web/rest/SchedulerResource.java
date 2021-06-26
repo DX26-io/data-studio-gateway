@@ -97,21 +97,21 @@ public class SchedulerResource {
 			throws Exception {
 		log.info("Creating schedule report {}", schedulerDTO);
 		VisualMetadata visualMetadata = visualMetadataService
-				.findOne(schedulerDTO.getReportLineItem().getVisualizationId());
+				.findOne(schedulerDTO.getReport_line_item().getVisualizationid());
 		Dashboard dashboard = dashboardService.findOne(schedulerDTO.getDashboardId());
-		Datasource datasource = datasourceService.findOne(schedulerDTO.getDatasourceId());
+		Datasource datasource = datasourceService.findOne(schedulerDTO.getDatasourceid());
 		if (!SecurityUtils.iAdmin()) {
-			schedulerDTO.getAssignReport().getCommunicationList()
-					.setEmails(schedulerService.getEmailList(SecurityUtils.getCurrentUserLogin()));
+			schedulerDTO.getAssign_report().getCommunication_list()
+					.setEmail(schedulerService.getEmailList(SecurityUtils.getCurrentUserLogin()));
 		}
-		schedulerDTO.getReport().setUserId(SecurityUtils.getCurrentUserLogin());
+		schedulerDTO.getReport().setUserid(SecurityUtils.getCurrentUserLogin());
 		schedulerDTO.getReport()
 				.setSubject("Report : " + visualMetadata.getMetadataVisual().getName() + " : " + new Date());
-		schedulerDTO.getReportLineItem().setVisualizationType(visualMetadata.getMetadataVisual().getName());
+		schedulerDTO.getReport_line_item().setVisualization(visualMetadata.getMetadataVisual().getName());
 		String query;
 		try {
 			query = schedulerService.buildQuery(schedulerDTO.getQueryDTO(), visualMetadata, datasource, dashboard,
-					schedulerDTO.getReportLineItem().getVisualizationId(), schedulerDTO.getReport().getUserId());
+					schedulerDTO.getReport_line_item().getVisualizationid(), schedulerDTO.getReport().getUserid());
 		} catch (QueryTransformerException e) {
 			log.error("Error validating a query " + schedulerDTO.getQueryDTO(), e);
 			SchedulerResponse response = new SchedulerResponse();
@@ -119,14 +119,14 @@ public class SchedulerResource {
 			return ResponseEntity.badRequest().body(response);
 		}
 		SchedulerNotificationDTO schedulerNotificationDTO = new SchedulerNotificationDTO(schedulerDTO.getReport(),
-				schedulerDTO.getReportLineItem(), schedulerDTO.getAssignReport(), schedulerDTO.getSchedule(), query,
+				schedulerDTO.getReport_line_item(), schedulerDTO.getAssign_report(), schedulerDTO.getSchedule(), query,
 				schedulerDTO.getConstraints());
 
 		schedulerService.setChannelCredentials(schedulerNotificationDTO);
 		log.info("Sending schedule report {}", schedulerNotificationDTO);
 
 		GetSchedulerReportDTO schedulerReportDTO;
-		if (schedulerDTO.getPutCall()) {
+		if (schedulerDTO.getPutcall()) {
 			schedulerReportDTO = schedulerService.updateSchedulerReport(schedulerNotificationDTO);
 		} else {
 			schedulerReportDTO = schedulerService.createSchedulerReport(schedulerNotificationDTO);

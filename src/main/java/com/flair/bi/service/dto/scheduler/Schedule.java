@@ -1,10 +1,10 @@
 package com.flair.bi.service.dto.scheduler;
 
 public class Schedule {
-	private String cronExp;
+	private String cron_exp;
 	private String timezone;
-	private String startDate;
-	private String endDate;
+	private String start_date;
+	private String end_date;
 
 	public Schedule() {
 	}
@@ -17,34 +17,34 @@ public class Schedule {
 		this.timezone = timezone;
 	}
 
-	public String getStartDate() {
-		return startDate;
+	public String getStart_date() {
+		return start_date;
 	}
 
-	public void setStartDate(String startDate) {
-		this.startDate = startDate;
+	public void setStart_date(String start_date) {
+		this.start_date = start_date;
 	}
 
-	public String getEndDate() {
-		return endDate;
+	public String getEnd_date() {
+		return end_date;
 	}
 
-	public void setEndDate(String endDate) {
-		this.endDate = endDate;
+	public void setEnd_date(String end_date) {
+		this.end_date = end_date;
 	}
 
-	public String getCronExp() {
-		return cronExp;
+	public String getCron_exp() {
+		return cron_exp;
 	}
 
-	public void setCronExp(String cronExp) {
-		this.cronExp = cronExp;
+	public void setCron_exp(String cron_exp) {
+		this.cron_exp = cron_exp;
 	}
 
 	@Override
 	public String toString() {
-		return "Schedule [cronExp=" + cronExp + ", timezone=" + timezone + ", startDate=" + startDate
-				+ ", endDate=" + endDate + "]";
+		return "Schedule [cron_exp=" + cron_exp + ", timezone=" + timezone + ", start_date=" + start_date
+				+ ", end_date=" + end_date + "]";
 	}
 
 }

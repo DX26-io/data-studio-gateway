@@ -14,8 +14,8 @@ import lombok.ToString;
 public class SchedulerNotificationDTO {
 
 	private ReportDTO report;
-	private ReportLineItem reportLineItem;
-	private AssignReport assignReport;
+	private ReportLineItem report_line_item;
+	private AssignReport assign_report;
 	private Schedule schedule;
 	private String query;
 	private String constraints;
