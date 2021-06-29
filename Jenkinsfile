@@ -12,9 +12,9 @@ node {
             sh 'git checkout -f master'
             sh 'git branch --show-current'
             echo '[INFO] Deploy Artifacts'
-            sh 'ls ~/.m2'
-            sh 'cat ~/.m2/settings.xml'
-            sh 'mvn clean package'
+            sh 'aws s3 cp s3://dx26-ci-cd/config/global/settings.xml .'
+            sh 'ls'
+            sh 'mvn -s settings.xml clean package'
             // withCredentials([usernamePassword(
             //     credentialsId: 'github',
             //     usernameVariable: 'GIT_CREDS_USR',
@@ -25,9 +25,9 @@ node {
         stage('Test and Package') {
             echo '[INFO] Test and Package'
             sh 'git branch --show-current'
-            sh 'ls ~/.m2'
-            sh 'cat ~/.m2/settings.xml'
-            sh 'mvn clean package'
+            sh 'aws s3 cp s3://dx26-ci-cd/config/global/settings.xml .'
+            sh 'ls'
+            sh 'mvn -s settings.xml clean package'
         }
         stage('Publish results') {
             echo '[INFO] [TODO] Publish tests'
