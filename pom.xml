@@ -37,7 +37,7 @@
         	<bucket.name>dx26-mvn-repo</bucket.name>
 		<docker.org>dx26io</docker.org>
 
-		<flair-messages.version>0.3.24</flair-messages.version>
+		<flair-messages.version>0.3.22</flair-messages.version>
 		<flair-commons.version>1.4.20</flair-commons.version>
 
 		<!-- GRPC::begin -->
