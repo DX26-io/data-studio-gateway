@@ -6,14 +6,18 @@ node {
         checkout scm
     }
 
+    stage('Fetch Config') {
+      sh 'git branch --show-current'
+      sh 'aws s3 cp s3://dx26-ci-cd/config/global/settings.xml .'
+      sh 'ls'
+    }
+
     if (env.BRANCH_NAME == 'master') {
         stage('Deploy Artifact') {
             echo '[INFO] Checking out master'
             sh 'git checkout -f master'
             sh 'git branch --show-current'
             echo '[INFO] Deploy Artifacts'
-            sh 'aws s3 cp s3://dx26-ci-cd/config/global/settings.xml .'
-            sh 'ls'
             sh 'mvn -s settings.xml clean package'
             // withCredentials([usernamePassword(
             //     credentialsId: 'github',
@@ -24,9 +28,6 @@ node {
     } else {
         stage('Test and Package') {
             echo '[INFO] Test and Package'
-            sh 'git branch --show-current'
-            sh 'aws s3 cp s3://dx26-ci-cd/config/global/settings.xml .'
-            sh 'ls'
             sh 'mvn -s settings.xml clean package'
         }
         stage('Publish results') {
