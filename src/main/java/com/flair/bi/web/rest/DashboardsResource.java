@@ -29,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -276,11 +277,11 @@ public class DashboardsResource {
 		return dashboardService.getReleaseByVersion(id, version);
 	}
 
-	@PostMapping("/dashboards/{id}/importView")
+	@PostMapping(value = "/dashboards/{id}/importView", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@Timed
 	@PreAuthorize("@accessControlManager.hasAccess(#id, 'WRITE', 'DASHBOARD')")
 	public ResponseEntity<ViewImportResult> importView(@PathVariable Long id,
-													   @RequestParam("file") MultipartFile file) throws IOException, ViewExportImportException {
+													   @RequestParam MultipartFile file) throws IOException, ViewExportImportException {
 		byte[] bytes = file.getBytes();
 		ViewExportDTO viewExportDTO = objectMapper.readValue(bytes, ViewExportDTO.class);
 		return ResponseEntity.ok(viewExportImportService.importView(id, viewExportDTO));
