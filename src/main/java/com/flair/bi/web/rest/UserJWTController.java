@@ -148,7 +148,7 @@ public class UserJWTController {
 	public ResponseEntity<?> handleSignupException(SignupException e) {
 		log.error("Signup error handler {}", e.getMessage());
 		return ResponseEntity.badRequest()
-				.headers(HeaderUtil.createFailureAlert("user", "flairbiApp.signup." + e.getError().name().toLowerCase()))
+				.headers(HeaderUtil.createFailureAlert("user", "datastudioApp.signup." + e.getError().name().toLowerCase()))
 				.body(null);
 	}
 }

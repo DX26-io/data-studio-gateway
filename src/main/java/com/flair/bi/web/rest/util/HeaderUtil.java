@@ -15,36 +15,36 @@ public final class HeaderUtil {
 
 	public static HttpHeaders createAlert(String message, String param) {
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("X-flairbiApp-alert", message);
-		headers.add("X-flairbiApp-params", param);
+		headers.add("X-datastudioApp-alert", message);
+		headers.add("X-datastudioApp-params", param);
 		return headers;
 	}
 
 	public static HttpHeaders createEntityCreationAlert(String entityName, String param) {
-		return createAlert("flairbiApp." + entityName + ".created", param);
+		return createAlert(entityName + ".created", param);
 	}
 
 	public static HttpHeaders createEntityUpdateAlert(String entityName, String param) {
-		return createAlert("flairbiApp." + entityName + ".updated", param);
+		return createAlert(entityName + ".updated", param);
 	}
 
 	public static HttpHeaders createEntityDeletionAlert(String entityName, String param) {
-		return createAlert("flairbiApp." + entityName + ".deleted", param);
+		return createAlert(entityName + ".deleted", param);
 	}
 
 	public static HttpHeaders createFailureAlert(String entityName, String errorKey, String defaultMessage) {
 		log.error("Entity creation failed, {}", defaultMessage);
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("X-flairbiApp-error", "error." + errorKey);
-		headers.add("X-flairbiApp-params", entityName);
+		headers.add("X-datastudioApp-error", "error." + errorKey);
+		headers.add("X-datastudioApp-params", entityName);
 		return headers;
 	}
 
 	public static HttpHeaders createFailureAlert(String entityName, String errorKey) {
 		log.error("Failure alert key {} entity {}", errorKey, entityName);
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("X-flairbiApp-error", errorKey);
-		headers.add("X-flairbiApp-params", entityName);
+		headers.add("X-datastudioApp-error", errorKey);
+		headers.add("X-datastudioApp-params", entityName);
 		return headers;
 	}
 }

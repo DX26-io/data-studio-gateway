@@ -141,7 +141,7 @@ public class DatasourcesResource {
                     existing.getName(), existing.getConnectionName(), existing.getId());
 
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME,
-                    "flairbiApp.datasources.error.datasources.same_name_connection_already_exists")).body(null);
+                    "datastudioApp.datasources.error.datasources.same_name_connection_already_exists")).body(null);
         }
 
         final Datasource result = datasourceService.save(datasource);
