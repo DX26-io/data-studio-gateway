@@ -47,19 +47,10 @@ pipeline {
 
         stage('Fetch Config') {
           steps {
-            sh 'git branch --show-current'
             sh 'aws s3 cp s3://dx26-ci-cd/config/global/settings.xml .'
+            sh 'ls .'
           }
         }
-
-      stage('Deploy Artifact') {
-        steps {
-          echo '[INFO] Checking out master'
-          sh 'git checkout -f master'
-          echo '[INFO] Deploy Artifacts'
-          sh 'mvn -s settings.xml clean package'
-        }
-      }
 
       stage('Test and Package') {
         steps {
