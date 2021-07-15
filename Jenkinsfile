@@ -63,16 +63,18 @@ pipeline {
 
       stage('Test and Package') {
         steps {
-          echo '[INFO] Test and Package'
-          if (env.BRANCH_NAME == 'master') {
-            sh 'mvn -s settings.xml clean package'
-            // withCredentials([usernamePassword(
-            //   credentialsId: 'github',
-            //   usernameVariable: 'GIT_CREDS_USR',
-            //   passwordVariable: 'GIT_CREDS_PSW'
-            // )]) { sh 'mvn -B release:clean release:prepare release:perform -Dusername=$GIT_CREDS_USR -Dpassword=$GIT_CREDS_PSW' }
-          } else {
-            sh 'mvn -s settings.xml clean package'
+          script {
+            echo '[INFO] Test and Package'
+            if (env.BRANCH_NAME == 'master') {
+              sh 'mvn -s settings.xml clean package'
+              // withCredentials([usernamePassword(
+              //   credentialsId: 'github',
+              //   usernameVariable: 'GIT_CREDS_USR',
+              //   passwordVariable: 'GIT_CREDS_PSW'
+              // )]) { sh 'mvn -B release:clean release:prepare release:perform -Dusername=$GIT_CREDS_USR -Dpassword=$GIT_CREDS_PSW' }
+            } else {
+              sh 'mvn -s settings.xml clean package'
+            }
           }
         }
       }
