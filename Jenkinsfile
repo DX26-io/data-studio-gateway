@@ -34,9 +34,7 @@
 // }
 
 pipeline {
-    agent {
-        docker { image 'maven:3.8-adoptopenjdk-8' }
-    }
+    agent any
     stages {
         stage('Checkout SCM') {
           steps {
@@ -53,9 +51,16 @@ pipeline {
         }
 
       stage('Test and Package') {
+        agent {
+          docker {
+            image 'maven:3.8-adoptopenjdk-8'
+            reuseNode true
+          }
+        }
         steps {
           script {
             echo '[INFO] Test and Package'
+            sh 'java -version'
             if (env.BRANCH_NAME == 'master') {
               sh 'mvn -s settings.xml clean package'
               // withCredentials([usernamePassword(
@@ -67,12 +72,6 @@ pipeline {
               sh 'mvn -s settings.xml clean package'
             }
           }
-        }
-      }
-
-      stage('Publish results') {
-        steps {
-          echo '[INFO] [TODO] Publish tests'
         }
       }
     }
