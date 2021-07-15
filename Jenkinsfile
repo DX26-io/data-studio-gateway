@@ -39,17 +39,22 @@ pipeline {
     }
     stages {
         stage('Checkout SCM') {
+          steps {
             cleanWs()
             checkout scm
+          }
         }
 
         stage('Fetch Config') {
-          sh 'git branch --show-current'
-          sh 'aws s3 cp s3://dx26-ci-cd/config/global/settings.xml .'
+          steps {
+            sh 'git branch --show-current'
+            sh 'aws s3 cp s3://dx26-ci-cd/config/global/settings.xml .'
+          }
         }
 
         if (env.BRANCH_NAME == 'master') {
             stage('Deploy Artifact') {
+              steps {
                 echo '[INFO] Checking out master'
                 sh 'git checkout -f master'
                 echo '[INFO] Deploy Artifacts'
@@ -59,14 +64,19 @@ pipeline {
                 //     usernameVariable: 'GIT_CREDS_USR',
                 //     passwordVariable: 'GIT_CREDS_PSW'
                 // )]) { sh 'mvn -B release:clean release:prepare release:perform -Dusername=$GIT_CREDS_USR -Dpassword=$GIT_CREDS_PSW' }
+              }
             }
         } else {
             stage('Test and Package') {
+              steps {
                 echo '[INFO] Test and Package'
                 sh 'mvn -s settings.xml clean package'
+              }
             }
             stage('Publish results') {
+              steps {
                 echo '[INFO] [TODO] Publish tests'
+              }
             }
         }
     }
