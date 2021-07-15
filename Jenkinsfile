@@ -52,32 +52,35 @@ pipeline {
           }
         }
 
-        if (env.BRANCH_NAME == 'master') {
-            stage('Deploy Artifact') {
-              steps {
-                echo '[INFO] Checking out master'
-                sh 'git checkout -f master'
-                echo '[INFO] Deploy Artifacts'
-                sh 'mvn -s settings.xml clean package'
-                // withCredentials([usernamePassword(
-                //     credentialsId: 'github',
-                //     usernameVariable: 'GIT_CREDS_USR',
-                //     passwordVariable: 'GIT_CREDS_PSW'
-                // )]) { sh 'mvn -B release:clean release:prepare release:perform -Dusername=$GIT_CREDS_USR -Dpassword=$GIT_CREDS_PSW' }
-              }
-            }
-        } else {
-            stage('Test and Package') {
-              steps {
-                echo '[INFO] Test and Package'
-                sh 'mvn -s settings.xml clean package'
-              }
-            }
-            stage('Publish results') {
-              steps {
-                echo '[INFO] [TODO] Publish tests'
-              }
-            }
+      stage('Deploy Artifact') {
+        steps {
+          echo '[INFO] Checking out master'
+          sh 'git checkout -f master'
+          echo '[INFO] Deploy Artifacts'
+          sh 'mvn -s settings.xml clean package'
         }
+      }
+
+      stage('Test and Package') {
+        steps {
+          echo '[INFO] Test and Package'
+          if (env.BRANCH_NAME == 'master') {
+            sh 'mvn -s settings.xml clean package'
+            // withCredentials([usernamePassword(
+            //   credentialsId: 'github',
+            //   usernameVariable: 'GIT_CREDS_USR',
+            //   passwordVariable: 'GIT_CREDS_PSW'
+            // )]) { sh 'mvn -B release:clean release:prepare release:perform -Dusername=$GIT_CREDS_USR -Dpassword=$GIT_CREDS_PSW' }
+          } else {
+            sh 'mvn -s settings.xml clean package'
+          }
+        }
+      }
+
+      stage('Publish results') {
+        steps {
+          echo '[INFO] [TODO] Publish tests'
+        }
+      }
     }
 }
